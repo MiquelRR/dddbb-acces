@@ -11,6 +11,7 @@ public class acces_db {
             // Ejecutamos la consulta SQL y obtenemos el resultado en ResultSet
             ResultSet rs = st.executeQuery("SELECT * FROM CLIENT");
             // Recorremos los resultados obtenidos y mostramos sus campos
+            
             while (rs.next()) {
                 String nombre = rs.getString(2);
                 String edad = rs.getString(4);

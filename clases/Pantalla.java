@@ -48,7 +48,7 @@ public class Pantalla {
     }
 
     private boolean instant(AniBloc bloc) {
-        boolean viu=bloc.frame();
+        boolean viu = bloc.frame();
         int y = bloc.getIny(), x = bloc.getInx();
         for (int i = 0; i < bloc.getAlt(); i++) {
             for (int j = 0; j < bloc.getAmple(); j++) {
@@ -76,7 +76,8 @@ public class Pantalla {
             e.printStackTrace();
         }
     }
-    protected void clear(){
+
+    protected void clear() {
         System.out.print("\033[H");
     }
 
@@ -98,6 +99,11 @@ public class Pantalla {
     // sobrecàrrega sense color
     public void situa(int x, int y, String texte) {
         this.situa(x, y, texte, this.ultcol);
+    }
+
+    public void cursor(int x, int y) {
+        this.cx = x;
+        this.cy = y;
     }
 
     // sobrecàrrega sense posició
@@ -139,16 +145,17 @@ public class Pantalla {
     public void marc() {
         this.marc(0, 0, this.hor, this.ver, 'l', this.ultcol);
     }
-    public void addAniBloc(AniBloc bloc){
+
+    public void addAniBloc(AniBloc bloc) {
         this.animacions.add(bloc);
     }
 
     public void mostraAnim(int vel) throws InterruptedException {
-        boolean viu=true;
+        boolean viu = true;
         while (viu) {
-            viu=false;
+            viu = false;
             for (AniBloc aniBloc : animacions) {
-                viu=this.instant(aniBloc) || viu;
+                viu = this.instant(aniBloc) || viu;
             }
             mostra();
             Thread.sleep(vel);
@@ -156,23 +163,65 @@ public class Pantalla {
     }
 
     public void mostra() {
+        mostraF(this.hor, this.ver);
+        System.out.println();
+
+    }
+
+    public void mostraFins(int ho, int ve){
+        mostra();
+        mostraF(ho, ve);
+    }
+
+    private void mostraF(int ho, int ve) {
         this.clear();
-        String gran="";
-        for (int y = 0; y < this.ver; y++) {
+        String gran = "";
+        for (int y = 0; y < ve - 1; y++) {
             for (int x = 0; x < this.hor; x++) {
                 if (cols[x][y] != this.ultcol) {
                     this.ultcol = cols[x][y];
-                    gran+=colors.get('x') + colors.get(ultcol);
-                    //System.out.print(colors.get('x') + colors.get(ultcol));
+                    gran += colors.get('x') + colors.get(ultcol);
+                    // System.out.print(colors.get('x') + colors.get(ultcol));
                 }
-                gran+=chars[x][y];
-                //System.out.print(chars[x][y]);
+                gran += chars[x][y];
+                // System.out.print(chars[x][y]);
             }
-            gran+='\n';
-            //System.out.println();
+            gran += '\n';
+            // System.out.println();
         }
-        System.out.println(gran);
+
+        for (int x = 0; x < ho; x++) {
+            if (cols[x][ve - 1] != this.ultcol) {
+                this.ultcol = cols[x][ve - 1];
+                gran += colors.get('x') + colors.get(ultcol);
+                // System.out.print(colors.get('x') + colors.get(ultcol));
+            }
+            gran += chars[x][ve - 1];
+            // System.out.print(chars[x][y]);
+        }
+
+        System.out.print(gran);
     }
+    /*
+     * public void mostra() {
+     * this.clear();
+     * String gran="";
+     * for (int y = 0; y < this.ver; y++) {
+     * for (int x = 0; x < this.hor; x++) {
+     * if (cols[x][y] != this.ultcol) {
+     * this.ultcol = cols[x][y];
+     * gran+=colors.get('x') + colors.get(ultcol);
+     * //System.out.print(colors.get('x') + colors.get(ultcol));
+     * }
+     * gran+=chars[x][y];
+     * //System.out.print(chars[x][y]);
+     * }
+     * gran+='\n';
+     * //System.out.println();
+     * }
+     * System.out.println(gran);
+     * }
+     */
 
     public void borra() {
         for (int y = 0; y < this.ver; y++) {

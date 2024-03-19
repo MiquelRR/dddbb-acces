@@ -15,6 +15,13 @@ CREATE TABLE IF NOT EXISTS Pasajeros (
     nombre_pasajero VARCHAR(100)
 );
 
+CREATE TABLE IF NOT EXISTS Aeropuertos (
+    Codigo VARCHAR(5) PRIMARY KEY,
+    Nombre VARCHAR(30),
+    Pais VARCHAR(25),
+    Ciudad VARCHAR(25)
+);
+
 CREATE TABLE IF NOT EXISTS Plazas (
     Id_plaza INT AUTO_INCREMENT PRIMARY KEY,
     id_asiento INT,
