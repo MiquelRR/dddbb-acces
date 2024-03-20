@@ -7,7 +7,6 @@ public class Avio {
     static{
         List<String[]> llista = Accesdb.lligTaula("Tipo_de_Avion");
         for (String[] linea: llista) {
-            System.out.println(">"+linea[1]+"<");
             flota.put(linea[1],Accesdb.toInt(linea[2]));
         }
     }
