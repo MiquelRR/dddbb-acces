@@ -7,9 +7,11 @@ import java.util.Scanner;
 
 public class Accesdb {
 
-    private final static String bdcon = "jdbc:mysql://localhost:3306/Reservas";
+    //private final static String bdcon = "jdbc:mysql://localhost:3306/Reservas";
+    private final static String bdcon = "jdbc:mysql://localhost:33006/Reservas";
     private final static String us = "root";
-    private final static String pw = "root";
+    //private final static String pw = "root";
+    private final static String pw = "pepito$";
     public static Scanner sc = new Scanner(System.in);
 
     public static String[] lligReg(String query) { // retorna el primer registre d'una consulta
@@ -95,8 +97,9 @@ public class Accesdb {
         try {
             eixida = Integer.parseInt(entrada);
         } catch (ClassCastException e) {
-            System.out.println("Error en convertir <" + entrada + "> en tipus Integer -" + e.getMessage());
-            sc.nextLine();
+            //System.out.println("Error en convertir <" + entrada + "> en tipus Integer -" + e.getMessage());
+           //sc.nextLine();
+           return null;
         }
         return eixida;
     }

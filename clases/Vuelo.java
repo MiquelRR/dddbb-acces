@@ -1,8 +1,10 @@
 package clases;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Scanner;
 
 public class Vuelo {
     public static HashMap<String, Aeropuerto> destinos = new HashMap<>();
@@ -13,11 +15,26 @@ public class Vuelo {
             destinos.put(linea[0],dest);
         }
     }
+    public static LocalDate getDataUsuari() {
+        Scanner sc = new Scanner(System.in);
+        LocalDate data = null;
+        while (data == null) {
+            String entrada = sc.nextLine();
+            try {
+                data = LocalDate.parse(entrada);
+            } catch (DateTimeParseException e) {
+                data = null;
+            }
+        }
+        sc.close();
+
+        return data;
+    }
     Aeropuerto origen ;
     Aeropuerto destino;
     Avio nave;
     LocalDate fecha;
-    public Vuelo(Avio nave, Aeropuerto origen, Aeropuerto destino, LocalDate fecha) {
+    public Vuelo(Avio nave, Aeropuerto origen, Aeropuerto destino, LocalDate fecha) { 
         this.origen = origen;
         this.destino = destino;
         this.fecha = fecha;
