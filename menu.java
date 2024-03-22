@@ -29,7 +29,7 @@ public class menu {
         int n = menu.length;
         int x = h / 6;
         p.borra();
-        p.marc();
+        p.marc(0,0,h+2,v+2,'d','w');
         int y = 6;
         // opcions
         for (Character c : opcions.keySet()) {
@@ -80,28 +80,28 @@ public class menu {
             p.situa(x, y, mostrar, 'c');
         }
         // TRIA AVIÓ
-        if (menu[3].equals("LLISTA DE MODELS")) {
-            x = h / 3 + 3;
-            y = 6;
-            p.situa(x, y, "                                    ", 'w');
-            x = 2*h / 3 + 3;
+        if (menu[2].equals("LLISTA DE MODELS")) {
+            x = 2*h / 3 + 4;
             y = 6;
             for (String v : Avio.flota.keySet()) {
                 y++;
                 p.situa(x, y, v, 'w');
-                p.situa(h * 2 / 3 - 3, y, Avio.flota.get(v) + "", 'n');
+                p.situa(h - 5, y, Avio.flota.get(v) + "", 'n');
             }
 
         }
         if(menu[1].equals("TRIA MODEL D'AVIÓ")){
-            x = h / 3 + 3;
+            y=7;
+            x=h/2-"AAAA-MM-DD".length()/2;
+            p.situa(x, y, mostrar, 'c');
+            x = h / 3 + 8;
             y = 8;
             p.situa(x, y, "Quantes places necessites?", 'w');
             y++;
             x=h/2-"NNN".length()/2;
-            p.situa(x, y, mostrar, 'c');
         }
         ;
+
         // passatgers
         if (menu[1].equals("PASSATGERS")) {
             x = h / 3 + 3;
@@ -195,6 +195,7 @@ public class menu {
     public static void nouVol(Pantalla p) {
         menu[0] = "OPCIONS";
         menu[1] = "TRIA DATA";
+        info="Info: Escriu la data i prem enter, fins que siga una data correcta";
         mostrar = "";
         LocalDate dia;
         while (mostrar == "") {
@@ -207,9 +208,24 @@ public class menu {
             }
         }
         menu[1] = "TRIA MODEL D'AVIÓ";
-        menu[3] = "LLISTA DE MODELS";
-        mostrar = "";
-        int places=Accesdb.toInt(mostra(p).trim());
+        menu[2] = "LLISTA DE MODELS";
+        info="Info: El sistema sel·lecciona el avio més proper a les plaçes que necessites";
+        Integer places=null;
+        String [] model= null;
+        while (model==null) {
+            places=Accesdb.toInt(mostra(p).trim());
+            model=Accesdb.lligReg(String.format(Accesdb.prouCapacQuery, places));
+            info="Info: Torna a intentar-ho";
+        }
+        mostrar=model[0]+"   "+model[1]+" places";
+        info="Info: tria pais d'oritge";
+        menu[1] = "TRIA PAIS ORITGE";
+        menu[2] = "PAÏSOS";
+        String pais=null; //*******************************************************************
+        while (pais==null) {
+            pais=mostra(p).trim();
+        }
+
 
     }
 

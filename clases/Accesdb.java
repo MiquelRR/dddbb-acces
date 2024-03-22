@@ -5,13 +5,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+
+
 public class Accesdb {
 
-    //private final static String bdcon = "jdbc:mysql://localhost:3306/Reservas";
-    private final static String bdcon = "jdbc:mysql://localhost:33006/Reservas";
+    private final static String bdcon = "jdbc:mysql://localhost:3306/Reservas";
+    //private final static String bdcon = "jdbc:mysql://localhost:33006/Reservas";
     private final static String us = "root";
-    //private final static String pw = "root";
-    private final static String pw = "pepito$";
+    private final static String pw = "root";
+    //private final static String pw = "pepito$";
+    public final static String prouCapacQuery="SELECT * FROM Tipo_de_Avion WHERE asientos >= %d ORDER BY asientos LIMIT 1;";
+
     public static Scanner sc = new Scanner(System.in);
 
     public static String[] lligReg(String query) { // retorna el primer registre d'una consulta
@@ -76,6 +80,28 @@ public class Accesdb {
             Connection con = DriverManager.getConnection(bdcon, us, pw);
             Statement st = con.createStatement();
             ResultSet rs = st.executeQuery("SELECT * FROM " + taula);
+            int cols = rs.getMetaData().getColumnCount();
+
+            while (rs.next()) {
+                String[] registre = new String[cols];
+                for (int i = 0; i < registre.length; i++) {
+                    registre[i] = rs.getString(i + 1);
+                }
+                eixida.add(registre);
+            }
+        } catch (SQLException e) {
+            System.out.println("Error en la bd: " + e.getErrorCode() + "-" + e.getMessage());
+            sc.nextLine();
+        }
+        return eixida;
+    }
+
+    public static List<String[]> lligQuery(String query) { // retorna la taula d'una consulta
+        List<String[]> eixida = new ArrayList<>();
+        try {
+            Connection con = DriverManager.getConnection(bdcon, us, pw);
+            Statement st = con.createStatement();
+            ResultSet rs = st.executeQuery(query);
             int cols = rs.getMetaData().getColumnCount();
 
             while (rs.next()) {

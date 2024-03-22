@@ -1,6 +1,9 @@
 package clases;
 
+import java.util.List;
+
 public class Aeropuerto {
+        public static List<String> paises ; //***********************************
         private String codigo;
         private String nombre;
         private String ciudad;
