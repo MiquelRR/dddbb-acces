@@ -9,8 +9,8 @@ import java.util.Scanner;
 
 public class Accesdb {
 
-    private final static String bdcon = "jdbc:mysql://localhost:3306/Reservas";
-    //private final static String bdcon = "jdbc:mysql://localhost:33006/Reservas";
+    //private final static String bdcon = "jdbc:mysql://localhost:3306/Reservas";
+    private final static String bdcon = "jdbc:mysql://localhost:33006/Reservas";
     private final static String us = "root";
     private final static String pw = "root";
     //private final static String pw = "pepito$";

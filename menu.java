@@ -62,9 +62,10 @@ public class menu {
                 p.situa(h * 2 / 3 - 3, y, Avio.flota.get(v) + "", 'n');
             }
             y++;
-            if (mostrar.length() == 0) {
-                info = "Info: Enter per a tabular, màxim 99 seients";
+            if (mostrar.equals("*")) {
+                info = "Info: Enter per a tabular";
             } else {
+                info = "Info: Màxim 99 seients";
                 p.situa(x, y, mostrar, 'w');
                 x = h * 2 / 3 - 3;
             }
@@ -142,12 +143,16 @@ public class menu {
         menu[0] = "OPCIONS";
         menu[1] = "MODELS AVIONS";
         String modelnou = "$";
-        mostrar = "";
+        mostrar = "*";
+        boolean sal=true;
         do {
             modelnou = mostra(p).trim();
-            ;
             mostrar = modelnou;
-        } while (Avio.flota.keySet().contains(modelnou));
+            if(Avio.flota.keySet().contains(modelnou)) {
+                mostrar="*";
+                sal=false;
+            }
+        } while (!sal);
         int places = -1;
         while (places < 0 || places > 99) {
             resposta = mostra(p);
