@@ -1,21 +1,24 @@
 package clases;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.Arrays;
 
 public class Pantalla {
     private static Scanner sc = new Scanner(System.in);
     private int hor;
     private int ver;
-    private int cx; //cursor x
-    private int cy; //cursor y
+    private int cx; // cursor x
+    private int cy; // cursor y
     private char[][] chars;
     private char[][] cols;
-    private char ultcol; 
+    private char ultcol;
     private List<AniBloc> animacions = new ArrayList<>();
 
     public Pantalla(int hor, int ver) {
@@ -92,7 +95,7 @@ public class Pantalla {
                 av++;
             }
         }
-        //ojito al bug: sense this fa comportaments extranys
+        // ojito al bug: sense this fa comportaments extranys
         this.cy = y + 1;
         this.cx = x;
     }
@@ -114,7 +117,7 @@ public class Pantalla {
 
     // sobrecàrrega sense posició ni color
     public void situa(String texte) {
-        this.situa(texte, this.ultcol);
+        this.situa(this.cx, this.cy, texte, this.ultcol);
     }
 
     private void posa(int x, int y, char ch, char col) {
@@ -169,7 +172,7 @@ public class Pantalla {
 
     }
 
-    public void mostraFins(int ho, int ve){
+    public void mostraFins(int ho, int ve) {
         mostra();
         mostraF(ho, ve);
     }
@@ -177,7 +180,7 @@ public class Pantalla {
     private void mostraF(int ho, int ve) {
         this.clear();
         String gran = "";
-        for (int y = 0; y < ve - 1; y++) {
+        for (int y = 0; y <= ve - 1; y++) {
             for (int x = 0; x < this.hor; x++) {
                 if (cols[x][y] != this.ultcol) {
                     this.ultcol = cols[x][y];
@@ -190,41 +193,120 @@ public class Pantalla {
             gran += '\n';
             // System.out.println();
         }
-
-        for (int x = 0; x < ho; x++) {
-            if (cols[x][ve - 1] != this.ultcol) {
-                this.ultcol = cols[x][ve - 1];
-                gran += colors.get('x') + colors.get(ultcol);
-                // System.out.print(colors.get('x') + colors.get(ultcol));
+        ho=(ho>this.hor)?this.hor:ho;
+        if (ve < this.ver) {
+            for (int x = 0; x < ho; x++) {
+                if (cols[x][ve] != this.ultcol) {
+                    this.ultcol = cols[x][ve - 1];
+                    gran += colors.get('x') + colors.get(ultcol);
+                    // System.out.print(colors.get('x') + colors.get(ultcol));
+                }
+                gran += chars[x][ve];
+                // System.out.print(chars[x][y]);
             }
-            gran += chars[x][ve - 1];
-            // System.out.print(chars[x][y]);
         }
 
         System.out.print(gran);
     }
-
-    public void setCursor(int x, int y ){
-        if (x<0) x=0;
-        if (y<0) y=0;
-        this.cx=(x>this.hor)? this.hor:x;
-        this.cy=(y>this.ver)? this.ver:y;
-    }
-
-    public String getString(){
-        mostraFins(cx, cy);
-        return sc.nextLine();
-    }
-    
-    
-    public Integer geInteger(){
-        try {
-            return Integer.parseInt(getString());
-        } catch (Exception e) {
-            return geInteger();
+    public void situa(String[] llista){
+        for (String string : llista) {
+            situa(string);            
         }
     }
 
+    public void setCursor(int x, int y) {
+        x = (x < 0) ? 0 : x;
+        y = (y < 0) ? 0 : y;
+        this.cx = (x > this.hor) ? this.hor : x;
+        this.cy = (y > this.ver) ? this.ver : y;
+    }
+
+    public String getString(String[] valids) {
+        mostraFins(this.cx, this.cy);
+        String res = sc.nextLine();
+        if (Arrays.asList(valids).contains(res)) {
+            situa(res);
+            return res;
+        } else
+            return getString(valids);
+    }
+
+    public String getString() {
+        mostraFins(this.cx, this.cy);
+        String res = sc.nextLine();
+        situa(res);
+        return res;
+    }
+    public String getString(String pregunta,String[] valids){
+        int tempcx = this.cx;
+        situa(pregunta);
+        cursor(this.cx + pregunta.length(), this.cy - 1);
+        String res = getString(valids);
+        this.cx = tempcx;
+        return res;
+    }
+
+    public String getString(String pregunta) {
+        int tempcx = this.cx;
+        situa(pregunta);
+        cursor(this.cx + pregunta.length(), this.cy - 1);
+        String res = getString();
+        this.cx = tempcx;
+        return res;
+    }
+
+    public Integer getInteger() {
+        mostraFins(this.cx, this.cy);
+        String userInput = sc.nextLine();
+        try {
+            int val = Integer.parseInt(userInput);
+            situa(Integer.toString(val));
+            return val;
+        } catch (NumberFormatException e) {
+            return getInteger();
+        }
+    }
+
+    public LocalDate getLocalDate(String pregunta) {
+        int tempcx = this.cx;
+        situa(pregunta);
+        cursor(this.cx + pregunta.length(), this.cy - 1);
+        LocalDate val = getLocalDate(true);
+        this.cx = tempcx;
+        return val;
+    }
+
+    public LocalDate getLocalDate() {
+        return getLocalDate(true);
+    }
+
+    public LocalDate getLocalDate(boolean help) {
+        if (help) {
+            char tempcol = ultcol;
+            situa("AAAA-MM-DD", 'n');
+            this.cy--;
+            this.ultcol = tempcol;
+        }
+        mostraFins(this.cx, this.cy);
+        String userInput = sc.nextLine();
+        try {
+            LocalDate val = LocalDate.parse(userInput);
+            situa(val.toString());
+            return val;
+        } catch (DateTimeParseException e) {
+            return getLocalDate(true);
+        }
+
+    }
+
+    public Integer getInteger(String pregunta) {
+        int tempcx = this.cx;
+        situa(pregunta);
+        cursor(this.cx + pregunta.length(), this.cy - 1);
+        Integer val = getInteger();
+        this.cx = tempcx;
+        return val;
+    }
 
     public void borra() {
         for (int y = 0; y < this.ver; y++) {
