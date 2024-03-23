@@ -5,15 +5,17 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 
 public class Pantalla {
+    private static Scanner sc = new Scanner(System.in);
     private int hor;
     private int ver;
-    private int cx;
-    private int cy;
+    private int cx; //cursor x
+    private int cy; //cursor y
     private char[][] chars;
     private char[][] cols;
-    private char ultcol;
+    private char ultcol; 
     private List<AniBloc> animacions = new ArrayList<>();
 
     public Pantalla(int hor, int ver) {
@@ -55,10 +57,8 @@ public class Pantalla {
                 posa(x + j, y + i, bloc.getFondo()[i][j], bloc.getColor()[i][j]);
 
             }
-
         }
         return viu;
-
     }
 
     protected void clear2() { // provoca mes parapadeig que print("\033[H")
@@ -92,8 +92,9 @@ public class Pantalla {
                 av++;
             }
         }
-        cy = y + 1;
-        cx = x;
+        //ojito al bug: sense this fa comportaments extranys
+        this.cy = y + 1;
+        this.cx = x;
     }
 
     // sobrecàrrega sense color
@@ -202,26 +203,28 @@ public class Pantalla {
 
         System.out.print(gran);
     }
-    /*
-     * public void mostra() {
-     * this.clear();
-     * String gran="";
-     * for (int y = 0; y < this.ver; y++) {
-     * for (int x = 0; x < this.hor; x++) {
-     * if (cols[x][y] != this.ultcol) {
-     * this.ultcol = cols[x][y];
-     * gran+=colors.get('x') + colors.get(ultcol);
-     * //System.out.print(colors.get('x') + colors.get(ultcol));
-     * }
-     * gran+=chars[x][y];
-     * //System.out.print(chars[x][y]);
-     * }
-     * gran+='\n';
-     * //System.out.println();
-     * }
-     * System.out.println(gran);
-     * }
-     */
+
+    public void setCursor(int x, int y ){
+        if (x<0) x=0;
+        if (y<0) y=0;
+        this.cx=(x>this.hor)? this.hor:x;
+        this.cy=(y>this.ver)? this.ver:y;
+    }
+
+    public String getString(){
+        mostraFins(cx, cy);
+        return sc.nextLine();
+    }
+    
+    
+    public Integer geInteger(){
+        try {
+            return Integer.parseInt(getString());
+        } catch (Exception e) {
+            return geInteger();
+        }
+    }
+
 
     public void borra() {
         for (int y = 0; y < this.ver; y++) {
