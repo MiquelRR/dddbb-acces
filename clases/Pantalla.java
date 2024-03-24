@@ -19,6 +19,10 @@ public class Pantalla {
     private char[][] chars;
     private char[][] cols;
     private char ultcol;
+    public void setUltcol(char ultcol) {
+        this.ultcol = ultcol;
+    }
+
     private List<AniBloc> animacions = new ArrayList<>();
 
     public Pantalla(int hor, int ver) {
@@ -168,7 +172,7 @@ public class Pantalla {
 
     public void mostra() {
         mostraF(this.hor, this.ver);
-        System.out.println();
+        System.out.println(colors.get('x'));
 
     }
 
@@ -185,13 +189,11 @@ public class Pantalla {
                 if (cols[x][y] != this.ultcol) {
                     this.ultcol = cols[x][y];
                     gran += colors.get('x') + colors.get(ultcol);
-                    // System.out.print(colors.get('x') + colors.get(ultcol));
                 }
                 gran += chars[x][y];
-                // System.out.print(chars[x][y]);
+                
             }
             gran += '\n';
-            // System.out.println();
         }
         ho=(ho>this.hor)?this.hor:ho;
         if (ve < this.ver) {
@@ -199,14 +201,12 @@ public class Pantalla {
                 if (cols[x][ve] != this.ultcol) {
                     this.ultcol = cols[x][ve - 1];
                     gran += colors.get('x') + colors.get(ultcol);
-                    // System.out.print(colors.get('x') + colors.get(ultcol));
                 }
                 gran += chars[x][ve];
-                // System.out.print(chars[x][y]);
             }
         }
 
-        System.out.print(gran);
+        System.out.print(gran+colors.get('x'));
     }
     public void situa(String[] llista){
         for (String string : llista) {
@@ -256,15 +256,30 @@ public class Pantalla {
     }
 
     public Integer getInteger() {
+        Integer val = getInteger(Integer.MIN_VALUE,Integer.MAX_VALUE);
+        return val;
+    }
+
+    public Integer getInteger(int min, int max){
         mostraFins(this.cx, this.cy);
         String userInput = sc.nextLine();
         try {
             int val = Integer.parseInt(userInput);
-            situa(Integer.toString(val));
-            return val;
+            if(val>=min && val <=max){
+                situa(Integer.toString(val));
+                return val;
+            } else return getInteger();
         } catch (NumberFormatException e) {
             return getInteger();
         }
+    }
+    public Integer getInteger(String pregunta) {
+        int tempcx = this.cx;
+        situa(pregunta);
+        cursor(this.cx + pregunta.length(), this.cy - 1);
+        Integer val = getInteger();
+        this.cx = tempcx;
+        return val;
     }
 
     public LocalDate getLocalDate(String pregunta) {
@@ -299,14 +314,7 @@ public class Pantalla {
 
     }
 
-    public Integer getInteger(String pregunta) {
-        int tempcx = this.cx;
-        situa(pregunta);
-        cursor(this.cx + pregunta.length(), this.cy - 1);
-        Integer val = getInteger();
-        this.cx = tempcx;
-        return val;
-    }
+    
 
     public void borra() {
         for (int y = 0; y < this.ver; y++) {
@@ -314,7 +322,7 @@ public class Pantalla {
                 this.chars[x][y] = ' ';
                 this.cols[x][y] = 'w';
             }
-            System.out.println();
+            System.out.println(colors.get('x'));
         }
     }
 

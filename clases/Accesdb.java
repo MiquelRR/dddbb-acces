@@ -9,11 +9,12 @@ import java.util.Scanner;
 
 public class Accesdb {
 
-    //private final static String bdcon = "jdbc:mysql://localhost:3306/Reservas";
-    private final static String bdcon = "jdbc:mysql://localhost:33006/Reservas";
+    private final static String bdcon = "jdbc:mysql://localhost:3306/Reservas";
+    //private final static String bdcon = "jdbc:mysql://localhost:33006/Reservas";
     private final static String us = "root";
     private final static String pw = "root";
     //private final static String pw = "pepito$";
+    public final static String paisos="SELECT DISTINCT Pais FROM Aeropuertos ORDER BY Pais ASC;";
     public final static String prouCapacQuery="SELECT * FROM Tipo_de_Avion WHERE asientos >= %d ORDER BY asientos LIMIT 1;";
 
     public static Scanner sc = new Scanner(System.in);

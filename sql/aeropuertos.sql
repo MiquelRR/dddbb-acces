@@ -9,7 +9,7 @@ insert into Aeropuertos (Codigo, Nombre, Pais, Ciudad) values ("HAM", "Fuhlsbuet
 insert into Aeropuertos (Codigo, Nombre, Pais, Ciudad) values ("MUC", "Franz Strauss", "Alemania", "Munich");
 insert into Aeropuertos (Codigo, Nombre, Pais, Ciudad) values ("STR", "Echterdingen", "Alemania", "Stuttgart");
 insert into Aeropuertos (Codigo, Nombre, Pais, Ciudad) values ("LAD", "4 de Fevereiro", "Angola", "Luanda");
-insert into Aeropuertos (Codigo, Nombre, Pais, Ciudad) values ("CUR", "Apto. Hato", "Antillas Hol.", "Curacao");
+insert into Aeropuertos (Codigo, Nombre, Pais, Ciudad) values ("CUR", "Apto. Hato", "Antillas H.", "Curacao");
 insert into Aeropuertos (Codigo, Nombre, Pais, Ciudad) values ("ANU", "V. C. Bird Int.", "Antigua", "Antigua");
 insert into Aeropuertos (Codigo, Nombre, Pais, Ciudad) values ("ALG", "Houari-Boumedienne", "Argelia", "Argel");
 insert into Aeropuertos (Codigo, Nombre, Pais, Ciudad) values ("BUE", "Ezeiza", "Argentina", "Buenos Aires");
@@ -175,7 +175,7 @@ insert into Aeropuertos (Codigo, Nombre, Pais, Ciudad) values ("OPO", "Porto", "
 insert into Aeropuertos (Codigo, Nombre, Pais, Ciudad) values ("SJU", "L. Muñóz Marín Int.", "Puerto Rico", "San Juan");
 insert into Aeropuertos (Codigo, Nombre, Pais, Ciudad) values ("SIG", "Isla Grande", "Puerto Rico", "San Juan");
 insert into Aeropuertos (Codigo, Nombre, Pais, Ciudad) values ("PRG", "Ruzyne", "Rep. Checa", "Praga");
-insert into Aeropuertos (Codigo, Nombre, Pais, Ciudad) values ("SDQ", "Las Américas", "Rep. Dominicana", "Sto. Domingo");
+insert into Aeropuertos (Codigo, Nombre, Pais, Ciudad) values ("SDQ", "Las Américas", "R. Dominicana", "Sto. Domingo");
 insert into Aeropuertos (Codigo, Nombre, Pais, Ciudad) values ("BBU", "Baneasa", "Rumania", "Bucarest");
 insert into Aeropuertos (Codigo, Nombre, Pais, Ciudad) values ("OTP", "Otopeni", "Rumania", "Bucarest");
 insert into Aeropuertos (Codigo, Nombre, Pais, Ciudad) values ("DKR", "Yoff", "Senegal", "Dakar");
