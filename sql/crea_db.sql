@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS Aeropuertos (
 
 CREATE TABLE IF NOT EXISTS Plazas (
     Id_plaza INT AUTO_INCREMENT PRIMARY KEY,
-    id_asiento INT,
+    id_asiento VARCHAR(5),
     id_pasajero INT,
     id_vuelo INT,
     ocupado ENUM('si', 'no'),

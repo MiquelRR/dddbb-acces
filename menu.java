@@ -194,7 +194,6 @@ public class menu {
         menu[1] = "AEROPORTS";
         menu[0] = "MENU";
         selOpt = 'x';
-
     }
 
     public static void nouVol(Pantalla p) {
@@ -230,8 +229,6 @@ public class menu {
         while (pais==null) {
             pais=mostra(p).trim();
         }
-
-
     }
 
     public static void main(String[] args) {
