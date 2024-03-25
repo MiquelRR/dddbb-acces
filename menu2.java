@@ -22,6 +22,8 @@ public class menu2 {
                 case '2':
                     p.altaPas();
                     break;
+                case'3':
+                    p.reservaVol();
                 case '6':
                     p.fi();
             }

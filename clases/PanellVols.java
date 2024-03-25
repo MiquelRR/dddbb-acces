@@ -115,10 +115,16 @@ public class PanellVols extends Pantalla {
             panell.setCursor(x, y);
         }
         if (capsa[2].equals("VOLS")) {
+            x--;
+            panell.setCursor(x, y);
             List<String[]> vols= Accesdb.lligTaula("Vuelos");
-            panell.situa("ORI DES FECHA",'c');
+            panell.situa("  ORIGE       DESTINCIÓ     FECHA",'c');
             for (String[] r : vols) {
-                panell.situa(r[1]+" "+r[2]+" "+r[3],'w');
+                String or_pais = Accesdb.lligReg(String.format(Accesdb.paisdecCodi,r[1]))[0];
+                or_pais= String.format("%-8s", or_pais).substring(0,8);
+                String de_pais = Accesdb.lligReg(String.format(Accesdb.paisdecCodi,r[2]))[0];
+                de_pais = String.format("%-8s", de_pais).substring(0,8);
+                panell.situa(r[1]+"-"+or_pais+" "+r[2]+"-"+de_pais+" "+r[3],'w');
             }
         }
 
@@ -137,7 +143,6 @@ public class PanellVols extends Pantalla {
             for (String[] registre : aeroportsPais) {                             
                 panell.situa(registre[0]+"  "+registre[3]);
             }
-
         }
         
         // Nou Passatger Nom
@@ -187,6 +192,9 @@ public class PanellVols extends Pantalla {
             
         }
         return new int[] { x, y };
+
+    }
+    public void reservaVol(){
 
     }
 
