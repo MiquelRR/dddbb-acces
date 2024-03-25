@@ -195,6 +195,8 @@ public class PanellVols extends Pantalla {
 
     }
     public void reservaVol(){
+        capsa[1] = "MODELS AVIONS";
+        capsa[2] = "PAÏSOS";
 
     }
 
