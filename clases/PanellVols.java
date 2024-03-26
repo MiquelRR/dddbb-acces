@@ -3,6 +3,7 @@ package clases;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 //--------------------------------patrón Singleton 
 public class PanellVols extends Pantalla {
@@ -17,7 +18,7 @@ public class PanellVols extends Pantalla {
     private String peu = " Info: Tria una opció del menu [0..6] ";
     private static HashMap<Character, String> opcions = new HashMap<>();
     private static String[] opval = new String[] { "0", "1", "2", "3", "4", "5", "6" };
-    private static String[] capsa = new String[] { "MENU", "MODELS AVIONS", "VOLS" };
+    private static String[] capsa = new String[] { "MENU", "MODELS AVIONS", "OR: TOTS DT: TOTS" };
     private static int n = capsa.length;
     static {
         opcions.put(opval[0].charAt(0), "Alta Model d'Avió");
@@ -30,6 +31,8 @@ public class PanellVols extends Pantalla {
 
     }
     private static String[] paisos;
+    private static String[] validOpts;
+    private static String[] validCodis;
     static {
         List<String[]> paiss = Accesdb.lligQuery(Accesdb.paisos);
         paisos = new String[paiss.size()];
@@ -40,6 +43,7 @@ public class PanellVols extends Pantalla {
     }
     private static List<String[]> aeroportsPais;
     private static String[] valCodis;
+    private static List<String[]> volsMostrats;
 
     private static int maxpl = 168;
 
@@ -82,8 +86,8 @@ public class PanellVols extends Pantalla {
     private int[] composa(char c) {
         int x = 0, y = 0;
         // resalta opcio triada
-        if (opcions.keySet().contains(c)){
-        panell.situa(14, 12 + c - 48, opcions.get(c), 'c'); // Y SENSE PARAMETRITZAR
+        if (opcions.keySet().contains(c)) {
+            panell.situa(14, 12 + c - 48, opcions.get(c), 'c'); // Y SENSE PARAMETRITZAR
         }
         // rescriu les capçaleres
         for (int i = 0; i < n; i++) {
@@ -103,48 +107,61 @@ public class PanellVols extends Pantalla {
                 panell.situa(" ".repeat(h / 3 - 2));
             }
         }
-        if (capsa[2].equals("PAÏSOS") || capsa[2].startsWith("AEROPORTS")|| capsa[2].equals("VOLS")) {
+        if (capsa[2].equals("PAÏSOS") || capsa[2].startsWith("AEROPORTS") || capsa[2].startsWith("OR:")) {
             x = h * 2 / 3 + 2;
-            y=5;
+            y = 5;
             panell.setCursor(x, y);
             for (int i = 5; i < v - 1; i++) {
                 panell.situa(" ".repeat(h / 3 - 2));
             }
             y++;
-            x+=2;
+            x += 2;
             panell.setCursor(x, y);
         }
-        if (capsa[2].equals("VOLS")) {
+        String[] cp = capsa[2].split(" "); // separa capçalera 2
+        if (cp[0].equals("OR:")) {
+            int idx = 1; // index per a validar
             x--;
             panell.setCursor(x, y);
-            List<String[]> vols= Accesdb.lligTaula("Vuelos");
-            panell.situa("  ORIGE       DESTINCIÓ     FECHA",'c');
-            for (String[] r : vols) {
-                String or_pais = Accesdb.lligReg(String.format(Accesdb.paisdecCodi,r[1]))[0];
-                or_pais= String.format("%-8s", or_pais).substring(0,8);
-                String de_pais = Accesdb.lligReg(String.format(Accesdb.paisdecCodi,r[2]))[0];
-                de_pais = String.format("%-8s", de_pais).substring(0,8);
-                panell.situa(r[1]+"-"+or_pais+" "+r[2]+"-"+de_pais+" "+r[3],'w');
+            volsMostrats = Accesdb.lligTaula("Vuelos");
+            if (!cp[1].equals("TOTS")) {
+                volsMostrats = volsMostrats.stream().filter(arr -> cp[1].equals(arr[1])).collect(Collectors.toList());
+            }
+            if (!cp[3].equals("TOTS")) {
+                volsMostrats = volsMostrats.stream().filter(arr -> cp[3].equals(arr[2])).collect(Collectors.toList());
+                idx = 2;
+            }
+            validCodis = new String[volsMostrats.size()];
+            int i = 0;
+            panell.situa("  ORIGE       DESTINCIÓ     DATA", 'c');
+            for (String[] r : volsMostrats) {
+                String or_pais = Accesdb.lligReg(String.format(Accesdb.paisdecCodi, r[1]))[0];
+                or_pais = String.format("%-8s", or_pais).substring(0, 8);
+                String de_pais = Accesdb.lligReg(String.format(Accesdb.paisdecCodi, r[2]))[0];
+                de_pais = String.format("%-8s", de_pais).substring(0, 8);
+                panell.situa(r[1] + "-" + or_pais + " " + r[2] + "-" + de_pais + " " + r[3], 'w');
+                validCodis[i++] = r[idx];
             }
         }
 
         if (capsa[2].equals("PAÏSOS")) {
             x--;
+            y = 5;
             for (String pais : paisos) {
                 panell.situa(x, y, pais);
-                y++;
-                if (y == v - 1) {
-                    y = 5;
+                if (y == v - 2) {
+                    y = 4;
                     x += 12;
                 }
+                y++;
             }
         }
         if (capsa[2].startsWith("AEROPORTS")) {
-            for (String[] registre : aeroportsPais) {                             
-                panell.situa(registre[0]+"  "+registre[3]);
+            for (String[] registre : aeroportsPais) {
+                panell.situa(registre[0] + "  " + registre[3]);
             }
         }
-        
+
         // Nou Passatger Nom
         if (capsa[1].equals("PASSATGERS")) {
             x = h / 3 + 3;
@@ -153,10 +170,13 @@ public class PanellVols extends Pantalla {
             panell.situa(h * 2 / 3 - 9, y, "Document", 'c');
             // soy un pringao, Patxi, a este no le he hecho hashmap, pero quiero ir probando
             List<String[]> pass = Accesdb.lligTaula("Pasajeros");
+            validOpts = new String[pass.size()];
+            int i = 0; // omplim llista validadora
             for (String[] pas : pass) {
                 y++;
                 panell.situa(x, y, pas[2], 'w');
                 panell.situa(h * 2 / 3 - 10, y, pas[1] + "", 'w');
+                validOpts[i++] = pas[1];
             }
             y++;
             yp = y;
@@ -172,10 +192,12 @@ public class PanellVols extends Pantalla {
             y = 6;
             panell.situa(x, y, "Afig nou avió:", 'c');
             panell.situa(h * 2 / 3 - 7, y, "Places", 'c');
+            validOpts = new String[Avio.flota.size()];
+            int i = 0; // omplim llista validadora
             for (String v : Avio.flota.keySet()) {
-                y++;
-                panell.situa(x, y, v, 'w');
+                panell.situa(x, ++y, v, 'w');
                 panell.situa(h * 2 / 3 - 4, y, String.format("%3d", Avio.flota.get(v)), 'w');
+                validOpts[i++] = v;
             }
             y++;
             xa = x;
@@ -186,31 +208,56 @@ public class PanellVols extends Pantalla {
         if (capsa[1].equals("PLACES PER PASSATGERS")) {
             panell.cursor(h * 2 / 3 - 4, ya);
         }
-        if(capsa[2].split(" ")[0].equals("AEROPORTS")){
-            
+        if (capsa[2].split(" ")[0].equals("AEROPORTS")) {
 
-            
         }
         return new int[] { x, y };
 
     }
-    public void reservaVol(){
-        capsa[1] = "MODELS AVIONS";
-        capsa[2] = "PAÏSOS";
+
+    public void reservaVol() {
+        String volid=null;
+        capsa[1] = "PASSATGERS";
+        capsa[2] = "OR: TOTS DT: TOTS";
+        composa('3');
+        if (validOpts.length > 0) {
+            if (validCodis.length > 0) {
+                panell.cursor(7, 22);
+                String model = panell.getString("Passatger DOCUMENT :", validOpts);
+                panell.cursor(7, 23);
+                String or = panell.getString("Aeroport Orige (CODI) : ", validCodis);
+                capsa[2] = "OR: " + or + " DT: TOTS";
+                peu = "Info: aeroport orige " + or;
+                composa('3');
+                panell.cursor(7, 24);
+                String dt = panell.getString("Aeroport Dest. (CODI) : ", validCodis);
+                capsa[2] = "OR: " + or + " DT: "+dt;
+                peu = "Info: aeroport orige " + or+" i destinacio "+dt;
+                panell.cursor(7, 25);
+                for (String[] vol : volsMostrats) {
+                    String res=panell.getString(vol[3]+" (S/N)",new String[] {"S","N"});
+                    if (res.charAt(0)=='S'){volid=vol[0]; break;}
+                }
+                composa('3');
+            } else peu = "Advertència: No hi han vols donats d'alta";
+        } else peu = "Advertència: No hi han passatgers donats d'alta";
+        if (volid==null) {
+            peu = "Advertència: No se ha seleccionat ningun vol";
+            composa('x');
+        } else {
+            composa('3');
+            ///////////////////      TRIA SEIENT
+
+        }
 
     }
 
     public void altaVol() {
         capsa[1] = "MODELS AVIONS";
         capsa[2] = "PAÏSOS";
-        String[] models = new String[Avio.flota.keySet().size()];
-        int i = 0;
-        for (String model : Avio.flota.keySet()) {
-            models[i++] = model;
-        }
         composa('1');
         panell.cursor(7, 22);
-        String model = panell.getString("Model d'avió : ", models);
+        String model = panell.getString("Model d'avió : ", validOpts);
         Integer places = Avio.flota.get(model);
         // panell.mostra();
         panell.cursor(7, 23);
@@ -219,7 +266,7 @@ public class PanellVols extends Pantalla {
         this.peu = "Info: Pais d'oritge " + pais;
         capsa[2] = "AEROPORTS " + pais.toUpperCase();
         panell.cursor(7, 22);
-        panell.situa("PLACES PER A PASSATGERS : "+places,'c');        
+        panell.situa("PLACES PER A PASSATGERS : " + places, 'c');
         composa('1');
         panell.cursor(7, 23);
         panell.situa(" ".repeat(31));
@@ -242,19 +289,21 @@ public class PanellVols extends Pantalla {
         composa('1');
         panell.cursor(7, 25);
         LocalDate data = panell.getLocalDate("Data de vol :");
-        this.peu = "Info: Vol afegit "+data.toString()+" des de "+codiOrige+" fins "+codiDest+ " amb un "+model;
-        capsa[2]="VOLS";
-        Vuelo vol=new Vuelo(places,codiOrige,codiDest,data);
+        this.peu = "Info: Vol afegit " + data.toString() + " des de " + codiOrige + " fins " + codiDest + " amb un "
+                + model;
+        capsa[2] = "VOLS";
+        Vuelo vol = new Vuelo(places, codiOrige, codiDest, data);
         composa('x');
     }
-    private void triaPais(String pais){
-        aeroportsPais = Accesdb.lligQuery(String.format(Accesdb.aeroportsDe,pais));
+
+    private void triaPais(String pais) {
+        aeroportsPais = Accesdb.lligQuery(String.format(Accesdb.aeroportsDe, pais));
         valCodis = new String[aeroportsPais.size()];
-        int i=0;
+        int i = 0;
         for (String[] registre : aeroportsPais) {
-            valCodis[i++]=registre[0];
+            valCodis[i++] = registre[0];
         }
-        
+
     }
 
     public void nouAvio() {
@@ -266,7 +315,7 @@ public class PanellVols extends Pantalla {
         this.peu = "Info: Màxim " + maxpl + " places";
         composa('0');
         int places = panell.getInteger(1, maxpl);
-        capsa[1] = "MODELS AVIONS";
+        // capsa[1] = "MODELS AVIONS";
         Avio model = new Avio(nomAvio, places);
         this.peu = "Info: Afegit model d'avió " + nomAvio + " amb " + places + " places";
     }

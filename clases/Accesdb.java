@@ -9,8 +9,8 @@ import java.util.Scanner;
 
 public class Accesdb {
 
-    //private final static String bdcon = "jdbc:mysql://localhost:3306/Reservas";
-    private final static String bdcon = "jdbc:mysql://localhost:33006/Reservas";
+    private final static String bdcon = "jdbc:mysql://localhost:3306/Reservas";
+    //private final static String bdcon = "jdbc:mysql://localhost:33006/Reservas";
     private final static String us = "root";
     private final static String pw = "root";
     //private final static String pw = "pepito$";
@@ -33,10 +33,12 @@ public class Accesdb {
                     eixida[i] = rs.getString(i + 1);
                 }
             }
+            con.close();
         } catch (SQLException e) {
-            System.out.println("Error en la bd: " + e.getErrorCode() + "-" + e.getMessage());
+            System.out.println("Error en la bd -lligReg-: " + e.getErrorCode() + "-" + e.getMessage());
             sc.nextLine();
         }
+        
         return eixida;
     }
 
@@ -67,8 +69,9 @@ public class Accesdb {
             if (rs.next()) {
                 idInsertat = rs.getInt(1); // Obtener el valor de la clave generada
             }
+            con.close();
         } catch (SQLException e) {
-            System.out.println("Error en la bd: " + e.getErrorCode() + "-" + e.getMessage());
+            System.out.println("Error en la bd -agrega-: " + e.getErrorCode() + "-" + e.getMessage());
             sc.nextLine();
 
         }
@@ -91,8 +94,9 @@ public class Accesdb {
                 }
                 eixida.add(registre);
             }
+            con.close();
         } catch (SQLException e) {
-            System.out.println("Error en la bd: " + e.getErrorCode() + "-" + e.getMessage());
+            System.out.println("Error en la bd -lligTaula- : " + e.getErrorCode() + "-" + e.getMessage());
             sc.nextLine();
         }
         return eixida;
@@ -113,8 +117,9 @@ public class Accesdb {
                 }
                 eixida.add(registre);
             }
+            con.close();
         } catch (SQLException e) {
-            System.out.println("Error en la bd: " + e.getErrorCode() + "-" + e.getMessage());
+            System.out.println("Error en la bd -lligQuery-: " + e.getErrorCode() + "-" + e.getMessage());
             sc.nextLine();
         }
         return eixida;
