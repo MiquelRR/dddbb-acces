@@ -126,10 +126,11 @@ public class PanellVols extends Pantalla {
             volsMostrats = Accesdb.lligTaula("Vuelos");
             if (!cp[1].equals("TOTS")) {
                 volsMostrats = volsMostrats.stream().filter(arr -> cp[1].equals(arr[1])).collect(Collectors.toList());
+                idx = 2;
             }
             if (!cp[3].equals("TOTS")) {
                 volsMostrats = volsMostrats.stream().filter(arr -> cp[3].equals(arr[2])).collect(Collectors.toList());
-                idx = 2;
+                idx = 3;
             }
             validCodis = new String[volsMostrats.size()];
             int i = 0;
@@ -216,7 +217,7 @@ public class PanellVols extends Pantalla {
     }
 
     public void reservaVol() {
-        String volid=null;
+        String volId = null;
         capsa[1] = "PASSATGERS";
         capsa[2] = "OR: TOTS DT: TOTS";
         composa('3');
@@ -229,24 +230,33 @@ public class PanellVols extends Pantalla {
                 capsa[2] = "OR: " + or + " DT: TOTS";
                 peu = "Info: aeroport orige " + or;
                 composa('3');
-                panell.cursor(7, 24);
-                String dt = panell.getString("Aeroport Dest. (CODI) : ", validCodis);
-                capsa[2] = "OR: " + or + " DT: "+dt;
-                peu = "Info: aeroport orige " + or+" i destinacio "+dt;
+                if (volsMostrats.size() > 1) {
+                    panell.cursor(7, 24);
+                    String dt = panell.getString("Aeroport Dest. (CODI) : ", validCodis);
+                    capsa[2] = "OR: " + or + " DT: " + dt;
+                    peu = "Info: aeroport orige " + or + " i destinacio " + dt;
+                } else {
+                    panell.situa("Aeroport Dest. (CODI) : "+volsMostrats.get(0)[3]);
+                }
                 panell.cursor(7, 25);
                 for (String[] vol : volsMostrats) {
-                    String res=panell.getString(vol[3]+" (S/N)",new String[] {"S","N"});
-                    if (res.charAt(0)=='S'){volid=vol[0]; break;}
+                    String res = panell.getString(vol[3] + " (S/N)", new String[] { "S", "N" });
+                    if (res.charAt(0) == 'S') {
+                        volId = vol[0];
+                        break;
+                    }
                 }
                 composa('3');
-            } else peu = "Advertència: No hi han vols donats d'alta";
-        } else peu = "Advertència: No hi han passatgers donats d'alta";
-        if (volid==null) {
+            } else
+                peu = "Advertència: No hi han vols donats d'alta";
+        } else
+            peu = "Advertència: No hi han passatgers donats d'alta";
+        if (volId == null) {
             peu = "Advertència: No se ha seleccionat ningun vol";
             composa('x');
         } else {
             composa('3');
-            ///////////////////      TRIA SEIENT
+            /////////////////// TRIA SEIENT
 
         }
 
