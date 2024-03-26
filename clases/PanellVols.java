@@ -175,7 +175,7 @@ public class PanellVols extends Pantalla {
             for (String[] pas : pass) {
                 y++;
                 panell.situa(x, y, pas[2], 'w');
-                panell.situa(h * 2 / 3 - 10, y, pas[1] + "", 'w');
+                panell.situa(h * 2 / 3 - 10, y, String.format("%10s", pas[1]), 'w');
                 validOpts[i++] = pas[1];
             }
             y++;
@@ -322,13 +322,13 @@ public class PanellVols extends Pantalla {
 
     public void altaPas() {
         capsa[1] = "PASSATGERS";
-        this.peu = "Info: Inserta el nom, enter i el document";
+        this.peu = "Info: Inserta el nom (max 20 car.), enter i el document";
         composa('2');
-        String nomPass = panell.getString();
+        String nomPass = panell.getString(20);
         capsa[1] = "INTRODUEIX EL DOCUMENT";
-        this.peu = "Info: el document no es pot repetir";
+        this.peu = "Info: El document no es pot repetir (max 10 car.)";
         composa('2');
-        String doc = panell.getString().toUpperCase();
+        String doc = panell.getString(10).toUpperCase();
         Pasajero pas = new Pasajero(nomPass, doc);
         capsa[1] = "PASSATGERS";
         this.peu = "Info: Afegit passager " + nomPass + " amb document " + doc;

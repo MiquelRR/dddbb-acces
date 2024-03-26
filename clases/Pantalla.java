@@ -230,13 +230,19 @@ public class Pantalla {
         } else
             return getString(valids);
     }
-
-    public String getString() {
+    public String getString(Integer maxLength){
         mostraFins(this.cx, this.cy);
         String res = sc.nextLine();
-        situa(res);
-        return res;
+        if(res.length()<maxLength){
+                situa(res);
+                return res;
+            } else return getString(maxLength);
     }
+
+    public String getString() {
+        return getString(300);
+    }
+
     public String getString(String pregunta,String[] valids){
         int tempcx = this.cx;
         situa(pregunta);
