@@ -18,7 +18,7 @@ public class PanellVols extends Pantalla {
     private String peu = " Info: Tria una opció del menu [0..6] ";
     private static HashMap<Character, String> opcions = new HashMap<>();
     private static String[] opval = new String[] { "0", "1", "2", "3", "4", "5", "6" };
-    private static String[] capsa = new String[] { "MENU", "MODELS AVIONS", "OR: TOTS DT: TOTS" };
+    private static String[] capsa = new String[] { "MENU", "PASSATGERS", "OR: TOTS DT: TOTS" };
     private static int n = capsa.length;
     static {
         opcions.put(opval[0].charAt(0), "Alta Model d'Avió");
@@ -55,6 +55,8 @@ public class PanellVols extends Pantalla {
     }
 
     public void menu() throws InterruptedException {
+        borraZona(0);
+        panell.situa(1,v," ".repeat(h));  // borra peu
         int n = capsa.length;
         panell.marc(0, 0, h + 2, v + 2, 'd', 'w');
         AniBloc peuBl = new AniBloc(v, 1 + 25, 1, h - 50);
@@ -83,6 +85,15 @@ public class PanellVols extends Pantalla {
 
     }
 
+    private void borraZona(int n) {
+        // borrar zona
+        int x = (h / 3) * n  + 2;
+        panell.setCursor(x, 5);
+        for (int i = 5; i < v - 1; i++) {
+            panell.situa(" ".repeat(h / 3 - 2));
+        }
+    }
+
     private int[] composa(char c) {
         int x = 0, y = 0;
         // resalta opcio triada
@@ -100,22 +111,12 @@ public class PanellVols extends Pantalla {
         panell.setUltcol('w');
 
         // borrar zona
-        if (capsa[1].equals("MODELS AVIONS") || capsa[1].equals("PASSATGERS")) {
-            x = h / 3 + 2;
-            panell.setCursor(x, 5);
-            for (int i = 5; i < v - 1; i++) {
-                panell.situa(" ".repeat(h / 3 - 2));
-            }
-        }
+        if (capsa[1].equals("MODELS AVIONS") || capsa[1].equals("PASSATGERS"))
+            borraZona(1);
         if (capsa[2].equals("PAÏSOS") || capsa[2].startsWith("AEROPORTS") || capsa[2].startsWith("OR:")) {
-            x = h * 2 / 3 + 2;
-            y = 5;
-            panell.setCursor(x, y);
-            for (int i = 5; i < v - 1; i++) {
-                panell.situa(" ".repeat(h / 3 - 2));
-            }
-            y++;
-            x += 2;
+            borraZona(2);
+            y=5;
+            x = h * 2 / 3 + 4;
             panell.setCursor(x, y);
         }
         String[] cp = capsa[2].split(" "); // separa capçalera 2
@@ -239,6 +240,7 @@ public class PanellVols extends Pantalla {
                 } else {
                     panell.situa("Aeroport Dest. (CODI) : " + volsMostrats.get(0)[3]);
                 }
+                composa('3');
                 panell.cursor(7, 25);
                 for (String[] vol : volsMostrats) {
                     String res = panell.getString(vol[3] + " (S/N) : ", new String[] { "S", "N" });
@@ -249,14 +251,17 @@ public class PanellVols extends Pantalla {
                 }
                 composa('3');
             } else
-                peu = ": cal fer altes de vols.";
+                peu = "Advertència: cal fer altes de vols.";
         } else
-            peu = ": cal tindre passatgers d'alta.";
+            peu = "Advertència: cal tindre passatgers d'alta.";
         if (volId == null) {
-            peu = "Advertència: Ningún vol sel·leccionat" + peu;
-            
+            peu = "Advertència: Ningún vol sel·leccionat";
+            capsa[2] = "OR: TOTS DT: TOTS";
+
         } else {
+            peu = "Info: Tria seient";
             composa('3');
+
             /////////////////// TRIA SEIENT
 
         }
@@ -305,10 +310,12 @@ public class PanellVols extends Pantalla {
             LocalDate data = panell.getLocalDate("Data de vol :");
             this.peu = "Info: Vol afegit " + data.toString() + " des de " + codiOrige + " fins " + codiDest + " amb un "
                     + model;
-            capsa[2] = "VOLS";
+            capsa[2] = "OR: TOTS DT: TOTS";
             Vuelo vol = new Vuelo(places, codiOrige, codiDest, data);
-        }
-        peu="Advertència: cal donar d'alta modèls d'avió";
+
+        } else
+            peu = "Advertència: cal donar d'alta modèls d'avió";
+
         composa('x');
     }
 
