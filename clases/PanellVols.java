@@ -185,7 +185,7 @@ public class PanellVols extends Pantalla {
         }
         // nou Passatger document
         if (capsa[1].equals("INTRODUEIX EL DOCUMENT")) {
-            panell.cursor(h * 2 / 3 - 12, yp);
+            panell.cursor(h * 2 / 3 - 11, yp);
         }
         // nou avio Nom Model
         if (capsa[1].equals("MODELS AVIONS")) {
@@ -217,6 +217,7 @@ public class PanellVols extends Pantalla {
     }
 
     public void reservaVol() {
+        peu = "";
         String volId = null;
         capsa[1] = "PASSATGERS";
         capsa[2] = "OR: TOTS DT: TOTS";
@@ -236,11 +237,11 @@ public class PanellVols extends Pantalla {
                     capsa[2] = "OR: " + or + " DT: " + dt;
                     peu = "Info: aeroport orige " + or + " i destinacio " + dt;
                 } else {
-                    panell.situa("Aeroport Dest. (CODI) : "+volsMostrats.get(0)[3]);
+                    panell.situa("Aeroport Dest. (CODI) : " + volsMostrats.get(0)[3]);
                 }
                 panell.cursor(7, 25);
                 for (String[] vol : volsMostrats) {
-                    String res = panell.getString(vol[3] + " (S/N)", new String[] { "S", "N" });
+                    String res = panell.getString(vol[3] + " (S/N) : ", new String[] { "S", "N" });
                     if (res.charAt(0) == 'S') {
                         volId = vol[0];
                         break;
@@ -248,61 +249,66 @@ public class PanellVols extends Pantalla {
                 }
                 composa('3');
             } else
-                peu = "Advertència: No hi han vols donats d'alta";
+                peu = ": cal fer altes de vols.";
         } else
-            peu = "Advertència: No hi han passatgers donats d'alta";
+            peu = ": cal tindre passatgers d'alta.";
         if (volId == null) {
-            peu = "Advertència: No se ha seleccionat ningun vol";
-            composa('x');
+            peu = "Advertència: Ningún vol sel·leccionat" + peu;
+            
         } else {
             composa('3');
             /////////////////// TRIA SEIENT
 
         }
+        composa('x');
 
     }
 
     public void altaVol() {
         capsa[1] = "MODELS AVIONS";
         capsa[2] = "PAÏSOS";
+        peu = "";
         composa('1');
         panell.cursor(7, 22);
-        String model = panell.getString("Model d'avió : ", validOpts);
-        Integer places = Avio.flota.get(model);
-        // panell.mostra();
-        panell.cursor(7, 23);
-        String pais = panell.getString("Pais d'oritge : ", paisos);
-        triaPais(pais);
-        this.peu = "Info: Pais d'oritge " + pais;
-        capsa[2] = "AEROPORTS " + pais.toUpperCase();
-        panell.cursor(7, 22);
-        panell.situa("PLACES PER A PASSATGERS : " + places, 'c');
-        composa('1');
-        panell.cursor(7, 23);
-        panell.situa(" ".repeat(31));
-        panell.cursor(7, 23);
-        String codiOrige = panell.getString("Codi Aeroport Orige : ", valCodis);
-        this.peu = "Info: Aeroport orige triat " + codiOrige;
-        capsa[2] = "PAÏSOS";
-        composa('1');
-        panell.cursor(7, 24);
-        pais = panell.getString("Pais destinació : ", paisos);
-        triaPais(pais);
-        this.peu = "Info: Pais destinació " + pais;
-        capsa[2] = "AEROPORTS " + pais.toUpperCase();
-        composa('1');
-        panell.cursor(7, 24);
-        panell.situa(" ".repeat(31));
-        panell.cursor(7, 24);
-        String codiDest = panell.getString("Codi Aeroport destinació : ", valCodis);
-        this.peu = "Info: Aeroport destinació triat " + codiDest;
-        composa('1');
-        panell.cursor(7, 25);
-        LocalDate data = panell.getLocalDate("Data de vol :");
-        this.peu = "Info: Vol afegit " + data.toString() + " des de " + codiOrige + " fins " + codiDest + " amb un "
-                + model;
-        capsa[2] = "VOLS";
-        Vuelo vol = new Vuelo(places, codiOrige, codiDest, data);
+        if (validOpts.length > 0) {
+            String model = panell.getString("Model d'avió : ", validOpts);
+            Integer places = Avio.flota.get(model);
+            // panell.mostra();
+            panell.cursor(7, 23);
+            String pais = panell.getString("Pais d'oritge : ", paisos);
+            triaPais(pais);
+            this.peu = "Info: Pais d'oritge " + pais;
+            capsa[2] = "AEROPORTS " + pais.toUpperCase();
+            panell.cursor(7, 22);
+            panell.situa("PLACES PER A PASSATGERS : " + places, 'c');
+            composa('1');
+            panell.cursor(7, 23);
+            panell.situa(" ".repeat(31));
+            panell.cursor(7, 23);
+            String codiOrige = panell.getString("Codi Aeroport Orige : ", valCodis);
+            this.peu = "Info: Aeroport orige triat " + codiOrige;
+            capsa[2] = "PAÏSOS";
+            composa('1');
+            panell.cursor(7, 24);
+            pais = panell.getString("Pais destinació : ", paisos);
+            triaPais(pais);
+            this.peu = "Info: Pais destinació " + pais;
+            capsa[2] = "AEROPORTS " + pais.toUpperCase();
+            composa('1');
+            panell.cursor(7, 24);
+            panell.situa(" ".repeat(31));
+            panell.cursor(7, 24);
+            String codiDest = panell.getString("Codi Aeroport destinació : ", valCodis);
+            this.peu = "Info: Aeroport destinació triat " + codiDest;
+            composa('1');
+            panell.cursor(7, 25);
+            LocalDate data = panell.getLocalDate("Data de vol :");
+            this.peu = "Info: Vol afegit " + data.toString() + " des de " + codiOrige + " fins " + codiDest + " amb un "
+                    + model;
+            capsa[2] = "VOLS";
+            Vuelo vol = new Vuelo(places, codiOrige, codiDest, data);
+        }
+        peu="Advertència: cal donar d'alta modèls d'avió";
         composa('x');
     }
 

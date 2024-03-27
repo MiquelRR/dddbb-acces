@@ -233,7 +233,7 @@ public class Pantalla {
     public String getString(Integer maxLength){
         mostraFins(this.cx, this.cy);
         String res = sc.nextLine();
-        if(res.length()<maxLength){
+        if(res.length()<=maxLength){
                 situa(res);
                 return res;
             } else return getString(maxLength);
