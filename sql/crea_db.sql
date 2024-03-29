@@ -10,8 +10,7 @@ CREATE TABLE IF NOT EXISTS Vuelos (
 );
 
 CREATE TABLE IF NOT EXISTS Pasajeros (
-    id_pasajero INT AUTO_INCREMENT PRIMARY KEY,
-    numero_pasaporte VARCHAR(20),
+    numero_pasaporte VARCHAR(20) PRIMARY KEY,
     nombre_pasajero VARCHAR(100)
 );
 
@@ -25,11 +24,11 @@ CREATE TABLE IF NOT EXISTS Aeropuertos (
 CREATE TABLE IF NOT EXISTS Plazas (
     Id_plaza INT AUTO_INCREMENT PRIMARY KEY,
     id_asiento VARCHAR(5),
-    id_pasajero INT,
+    id_pasajero VARCHAR(20),
     id_vuelo INT,
-    ocupado ENUM('si', 'no'),
+    ocupado ENUM('si', 'no') DEFAULT 'no',
     FOREIGN KEY (id_vuelo) REFERENCES Vuelos(id_vuelo),
-    FOREIGN KEY (id_pasajero) REFERENCES Pasajeros(id_pasajero)
+    FOREIGN KEY (id_pasajero) REFERENCES Pasajeros(numero_pasaporte)
 );
 
 CREATE TABLE IF NOT EXISTS Tipo_de_Avion (

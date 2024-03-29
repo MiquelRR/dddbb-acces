@@ -18,7 +18,22 @@ public class Accesdb {
     public final static String prouCapacQuery="SELECT * FROM Tipo_de_Avion WHERE asientos >= %d ORDER BY asientos LIMIT 1;";
     public final static String aeroportsDe="SELECT * FROM Aeropuertos WHERE Pais = '%s';";
     public final static String paisdecCodi="SELECT Pais FROM Aeropuertos WHERE Codigo='%s'";
+    public final static String placesVol="SELECT * FROM Plazas WHERE id_vuelo = %s;";
+    public final static String ocupa="UPDATE Plazas SET id_pasajero = '%s', ocupado = 'si' WHERE id_vuelo = %s AND id_asiento = '%s';";
     public static Scanner sc = new Scanner(System.in);
+
+    public static void modifica(String query){
+        try {
+            Connection con = DriverManager.getConnection(bdcon, us, pw);
+            Statement st = con.createStatement();
+            st.executeUpdate(query);
+            con.close();
+        } catch (SQLException e) {
+            System.out.println("Error en la bd -modifica-: \n"+query+ "\n" + e.getErrorCode() + "-" + e.getMessage());
+            sc.nextLine();
+        }
+
+    }
 
     public static String[] lligReg(String query) { // retorna el primer registre d'una consulta
         String[] eixida = null;

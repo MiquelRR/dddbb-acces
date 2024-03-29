@@ -1,11 +1,8 @@
 package clases;
-
 import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Scanner;
+
 
 public class Vuelo {
     @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -17,6 +14,7 @@ public class Vuelo {
         for (int i = 0; i < 252; i++) {
             idAsiento=letra.toString()+String.format("%02d",num);
             seients.add(idAsiento);
+            letra++;
             if (letra=='G'){
                 letra='A';
                 num++;
@@ -28,14 +26,10 @@ public class Vuelo {
     String destino;
     Integer places;
     LocalDate fecha;
-    
-    public Vuelo(Integer places, String origen, String destino, LocalDate fecha) { 
-        this.origen = origen;
-        this.destino = destino;
-        this.fecha = fecha;
-        this.places=places;
-        int idVol=Accesdb.agrega("Vuelos", new Object[] {"origen",origen,"destino", destino, "fecha", fecha.toString()});
-        int elimina=places%6;
+    public static List<String[]> generaPlaces(int places){
+        List<String[]> lista = new ArrayList<>();
+        int elimina=6-(places%6);
+        if (elimina==6) elimina=0;
         int n=places+elimina;
         String mig=String.format("%02d",n/12);
         String cua=String.format("%02d",n/6);
@@ -45,8 +39,22 @@ public class Vuelo {
         if (elimina>2) idAsiento.remove("C"+mig);
         if (elimina>3) idAsiento.remove("D"+mig);
         if (elimina>4) idAsiento.remove("C"+cua);
-        for (String id:idAsiento) {
-            Accesdb.agrega("Plazas",new Object[]{"id_asiento", id, "id_vuelo", idVol, "ocupado", "no"});
+        for (String reg : idAsiento) {
+                   lista.add(new String[]{"x",reg,"","","no"});     
+        }
+        return lista;
+
+    }
+    
+    public Vuelo(Integer places, String origen, String destino, LocalDate fecha) { 
+        this.origen = origen;
+        this.destino = destino;
+        this.fecha = fecha;
+        this.places=places;
+        int idVol=Accesdb.agrega("Vuelos", new Object[] {"origen",origen,"destino", destino, "fecha", fecha.toString()});
+        List<String[]> lista= generaPlaces(places);
+        for (String[] id:lista) {
+            Accesdb.agrega("Plazas",new Object[]{"id_asiento", id[1], "id_vuelo", idVol, "ocupado", "no"});
             //quiza esto es lento ✈   ✈️      
         }   
 

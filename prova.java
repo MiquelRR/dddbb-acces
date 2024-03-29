@@ -1,3 +1,6 @@
+import java.util.Arrays;
+import java.util.List;
+
 import clases.Pantalla;
 
 public class prova {
@@ -17,10 +20,10 @@ public class prova {
         p.situa("¿Cuantos años tienes?");
         edad=p.getInteger();
         String especialidad ;
-        String[] lista=new String[] {"DAM","DAW","HPGL","NADA","ASMR","COSAS"};
+        List<String> lista = Arrays.asList("DAM","DAW","HPGL","NADA","ASMR","COSAS");
         p.cursor(36,2);
         p.situa("ELIGE:");
-        p.situa(lista);
+        //p.situa(lista);
         especialidad=p.getString("--->:",lista);
         p.cursor(9,6);
         edad =p.getInteger("Cuantos añitos tienes :");

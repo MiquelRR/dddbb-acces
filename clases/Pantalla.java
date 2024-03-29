@@ -221,10 +221,10 @@ public class Pantalla {
         this.cy = (y > this.ver) ? this.ver : y;
     }
 
-    public String getString(String[] valids) {
+    public String getString(List<String> valids) {
         mostraFins(this.cx, this.cy);
         String res = sc.nextLine();
-        if (Arrays.asList(valids).contains(res)) {
+        if (valids.contains(res)) {
             situa(res);
             return res;
         } else
@@ -243,7 +243,7 @@ public class Pantalla {
         return getString(300);
     }
 
-    public String getString(String pregunta,String[] valids){
+    public String getString(String pregunta,List<String>  valids){
         int tempcx = this.cx;
         situa(pregunta);
         cursor(this.cx + pregunta.length(), this.cy - 1);
