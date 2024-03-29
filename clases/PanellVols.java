@@ -8,13 +8,27 @@ import java.util.stream.Collectors;
 //--------------------------------patrón Singleton 
 public class PanellVols extends Pantalla {
     private static PanellVols panell;// -------patrón Singleton
-    private static int h = 120, v = 38;
+    private static int h = 120, v = 38,  vf=(v-5-3); //vf son les linees de la zona de dades
+    private static int mig =  5+vf/2; // posicio de la linea central de la zona de dades
 
     private PanellVols() throws InterruptedException {
         super(h + 2, v + 2);
 
     }
-
+    private static String[] asciiCap = new String[4];
+    static{
+        asciiCap[0]="    .-^^^^^^^^^^^^^^^-.";
+        asciiCap[1]="  .'                   '.";
+        asciiCap[2]=" /                       \\";
+        asciiCap[3]=";                         ;";
+    }
+    private static String[] asciiCua = new String[4];
+    static{
+        asciiCua[0]=";                         ;";
+        asciiCua[1]=" \\                       / ";
+        asciiCua[2]="  '._                 _.'";
+        asciiCua[3]="     ``-------------``";
+    }
     private String peu = " Info: Tria una opció del menu [0..6] ";
     private static HashMap<Character, String> opcions = new HashMap<>();
     private static String[] opval = new String[] { "0", "1", "2", "3", "4", "5", "6" };
@@ -45,9 +59,9 @@ public class PanellVols extends Pantalla {
     private static String[] valCodis;
     private static List<String[]> volsMostrats;
 
-    private static int maxpl = 168;
+    private static int maxpl = 6*(vf);
 
-    private int xa = 0, ya = 0, xp = 0, yp = 0;
+    private int xa = 0, ya = 0, yp = 0;
 
     public Character getValidMenuChar() {
         return panell.getString("     --> ", opval).charAt(0);
@@ -56,14 +70,15 @@ public class PanellVols extends Pantalla {
 
     public void menu() throws InterruptedException {
         borraZona(0);
-        panell.situa(1,v," ".repeat(h));  // borra peu
+        panell.situa(1,v," ".repeat(h),'w');  // borra peu
         int n = capsa.length;
-        panell.marc(0, 0, h + 2, v + 2, 'd', 'w');
         AniBloc peuBl = new AniBloc(v, 1 + 25, 1, h - 50);
         char[][] p = new char[][] { (" " + peu + " ").toCharArray() };
         peuBl.scrDreMi(p, 'g');
         panell.addAniBloc(peuBl);
         AniBloc[] capsBl = new AniBloc[n];
+        //marcs
+        panell.marc(0, 0, h + 2, v + 2, 'd', 'w');
         for (int i = 0; i < n; i++) {
             panell.marc(1 + (h / n) * i, 1, (h / n), v - 1, 'l', 'b');
             panell.marc(2 + (h / n) * i, 2, (h / n) - 2, 3, 'd', 'c');
@@ -90,28 +105,18 @@ public class PanellVols extends Pantalla {
         int x = (h / 3) * n  + 2;
         panell.setCursor(x, 5);
         for (int i = 5; i < v - 1; i++) {
-            panell.situa(" ".repeat(h / 3 - 2));
+            panell.situa(" ".repeat(h / 3 - 2),'w');
         }
     }
 
-    private int[] composa(char c) {
+    private void composa(char c) {
         int x = 0, y = 0;
         // resalta opcio triada
         if (opcions.keySet().contains(c)) {
             panell.situa(14, 12 + c - 48, opcions.get(c), 'c'); // Y SENSE PARAMETRITZAR
         }
-        // rescriu les capçaleres
-        for (int i = 0; i < n; i++) {
-            panell.situa(3 + ((h / n) * i), 3, " ".repeat(((h / n) - 4)));
-            panell.situa(3 + ((h / n) - 4 - capsa[i].length()) / 2 + ((h / n) * i), 3, capsa[i]);
-        }
-        // rescriu el peu
-        panell.situa(1, v, " ".repeat(h), 'n');
-        panell.situa((h - peu.length()) / 2, v, peu, 'g');
-        panell.setUltcol('w');
-
         // borrar zona
-        if (capsa[1].equals("MODELS AVIONS") || capsa[1].equals("PASSATGERS"))
+        if (capsa[1].equals("MODELS AVIONS") || capsa[1].equals("PASSATGERS") || capsa[1].equals("TRIA SEIENT"))
             borraZona(1);
         if (capsa[2].equals("PAÏSOS") || capsa[2].startsWith("AEROPORTS") || capsa[2].startsWith("OR:")) {
             borraZona(2);
@@ -150,17 +155,16 @@ public class PanellVols extends Pantalla {
             x--;
             y = 5;
             for (String pais : paisos) {
-                panell.situa(x, y, pais);
+                panell.situa(x, y, pais,'w');
                 if (y == v - 2) {
-                    y = 4;
-                    x += 12;
+                    y = 4; x += 12;
                 }
                 y++;
             }
         }
         if (capsa[2].startsWith("AEROPORTS")) {
             for (String[] registre : aeroportsPais) {
-                panell.situa(registre[0] + "  " + registre[3]);
+                panell.situa(registre[0] + "  " + registre[3],'w');
             }
         }
 
@@ -181,13 +185,11 @@ public class PanellVols extends Pantalla {
                 validOpts[i++] = pas[1];
             }
             y++;
-            yp = y;
-            panell.cursor(x, y);
+            ya = y; xa=x;
         }
         // nou Passatger document
-        if (capsa[1].equals("INTRODUEIX EL DOCUMENT")) {
-            panell.cursor(h * 2 / 3 - 11, yp);
-        }
+        if (capsa[1].equals("INTRODUEIX EL DOCUMENT")) xa=h * 2 / 3 - 10;
+
         // nou avio Nom Model
         if (capsa[1].equals("MODELS AVIONS")) {
             x = h / 3 + 3;
@@ -202,24 +204,33 @@ public class PanellVols extends Pantalla {
                 validOpts[i++] = v;
             }
             y++;
-            xa = x;
-            ya = y;
-            panell.cursor(x, ya);
+            xa = x; ya = y;
         }
         // nou avio places
-        if (capsa[1].equals("PLACES PER PASSATGERS")) {
-            panell.cursor(h * 2 / 3 - 4, ya);
-        }
-        if (capsa[2].split(" ")[0].equals("AEROPORTS")) {
+        if (capsa[1].equals("PLACES PER PASSATGERS")) xa=h * 2 / 3 - 4;
 
+        // rescriu les capçaleres i marcs
+        panell.marc(0, 0, h + 2, v + 2, 'd', 'w');
+        for (int i = 0; i < n; i++) {
+            panell.marc(1 + (h / n) * i, 1, (h / n), v - 1, 'l', 'b');
+            panell.marc(2 + (h / n) * i, 2, (h / n) - 2, 3, 'd', 'c');
+            panell.situa(3 + ((h / n) * i), 3, " ".repeat(((h / n) - 4)),'w');
+            panell.situa(3 + ((h / n) - 4 - capsa[i].length()) / 2 + ((h / n) * i), 3, capsa[i],'g');
         }
-        return new int[] { x, y };
+        // rescriu el peu
+        panell.situa(1, v, " ".repeat(h), 'n');
+        panell.situa((h - peu.length()) / 2, v, peu, 'g');
+
+        panell.setUltcol('w');
+        panell.cursor(xa, ya);
+        //return new int[] { xa, ya };
 
     }
 
     public void reservaVol() {
         peu = "";
         String volId = null;
+
         capsa[1] = "PASSATGERS";
         capsa[2] = "OR: TOTS DT: TOTS";
         composa('3');
@@ -238,7 +249,7 @@ public class PanellVols extends Pantalla {
                     capsa[2] = "OR: " + or + " DT: " + dt;
                     peu = "Info: aeroport orige " + or + " i destinacio " + dt;
                 } else {
-                    panell.situa("Aeroport Dest. (CODI) : " + volsMostrats.get(0)[3]);
+                    panell.situa("Aeroport Dest. (CODI) : " + volsMostrats.get(0)[3],'w');
                 }
                 composa('3');
                 panell.cursor(7, 25);
@@ -260,6 +271,7 @@ public class PanellVols extends Pantalla {
 
         } else {
             peu = "Info: Tria seient";
+            capsa[1]="TRIA SEIENT";
             composa('3');
 
             /////////////////// TRIA SEIENT
@@ -288,7 +300,7 @@ public class PanellVols extends Pantalla {
             panell.situa("PLACES PER A PASSATGERS : " + places, 'c');
             composa('1');
             panell.cursor(7, 23);
-            panell.situa(" ".repeat(31));
+            panell.situa(" ".repeat(31),'w');
             panell.cursor(7, 23);
             String codiOrige = panell.getString("Codi Aeroport Orige : ", valCodis);
             this.peu = "Info: Aeroport orige triat " + codiOrige;
@@ -301,7 +313,7 @@ public class PanellVols extends Pantalla {
             capsa[2] = "AEROPORTS " + pais.toUpperCase();
             composa('1');
             panell.cursor(7, 24);
-            panell.situa(" ".repeat(31));
+            panell.situa(" ".repeat(31),'w');
             panell.cursor(7, 24);
             String codiDest = panell.getString("Codi Aeroport destinació : ", valCodis);
             this.peu = "Info: Aeroport destinació triat " + codiDest;
@@ -338,9 +350,9 @@ public class PanellVols extends Pantalla {
         this.peu = "Info: Màxim " + maxpl + " places";
         composa('0');
         int places = panell.getInteger(1, maxpl);
-        // capsa[1] = "MODELS AVIONS";
         Avio model = new Avio(nomAvio, places);
         this.peu = "Info: Afegit model d'avió " + nomAvio + " amb " + places + " places";
+        capsa[1] = "MODELS AVIONS";
     }
 
     public void altaPas() {
@@ -355,6 +367,8 @@ public class PanellVols extends Pantalla {
         Pasajero pas = new Pasajero(nomPass, doc);
         capsa[1] = "PASSATGERS";
         this.peu = "Info: Afegit passager " + nomPass + " amb document " + doc;
+        
+
     }
 
     public void fi() {
