@@ -5,8 +5,7 @@ import java.util.List;
 
 
 public class Vuelo {
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    final static List<String> seients = new ArrayList();
+    final static List<String> seients = new ArrayList<>();
     static{
         Character letra='A';
         int num=1;
@@ -26,14 +25,18 @@ public class Vuelo {
     String destino;
     Integer places;
     LocalDate fecha;
-    public static List<String[]> generaPlaces(int places){
+    public static List<String[]> generaPlaces(int p){
         List<String[]> lista = new ArrayList<>();
-        int elimina=6-(places%6);
-        if (elimina==6) elimina=0;
-        int n=places+elimina;
+        List<String> idAsiento= new ArrayList<>();
+        int elimina=0;
+        int n=p;
+        if(p%6!=0){
+            n=((p / 6) + 1) * 6;
+            elimina=n-p;
+        }
         String mig=String.format("%02d",n/12);
         String cua=String.format("%02d",n/6);
-        List<String> idAsiento = seients.subList(0, n);
+        idAsiento = new ArrayList<>(seients.subList(0, n));
         if (elimina>0) idAsiento.remove("C01");
         if (elimina>1) idAsiento.remove("D01");
         if (elimina>2) idAsiento.remove("C"+mig);

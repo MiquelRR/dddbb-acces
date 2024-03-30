@@ -139,7 +139,7 @@ public class PanellVols extends Pantalla {
             //panell.setCursor(x, y);
         }
         if (capsa[1].equals("SEIENTS AVIÓ")) {
-            int files =(mapavio.size()/6)+((mapavio.size()%6>0)?1:0);
+            int files =Integer.parseInt(PanellVols.mapavio.get(PanellVols.mapavio.size()-1)[1].substring(1));
             y=mig-files/2-asciiCap.length;
             x=(h/2)-(asciiCap[asciiCap.length-1].length()/2);
             panell.setCursor(x, y);
@@ -150,7 +150,7 @@ public class PanellVols extends Pantalla {
             char filant='0';
             char color='w';
             validOpts.clear();
-            for (String[] plaza : mapavio) {
+            for (String[] plaza : PanellVols.mapavio) {
                 if(filant!=plaza[1].charAt(2)){
                     y++;
                     filant=plaza[1].charAt(2);
@@ -323,13 +323,13 @@ public class PanellVols extends Pantalla {
         } else {
             peu = "Info: SEIENTS AVIÓ per exemple, A01";
             capsa[1]="SEIENTS AVIÓ";
-            mapavio=Accesdb.lligQuery(String.format(Accesdb.placesVol,volId));
+            PanellVols.mapavio=Accesdb.lligQuery(String.format(Accesdb.placesVol,volId));
             composa('3');
             panell.cursor(7, y);
             String res = panell.getString(" Plaça desitjada : ", validOpts);
             peu = "Info: Reserva realizada per "+document+" al seient "+res;
             Accesdb.modifica(String.format(Accesdb.ocupa, document, volId, res));
-            for (String[] reg : mapavio) { //marcat en local  el preview
+            for (String[] reg : PanellVols.mapavio) { //marcat en local  el preview
                 if(reg[1].equals(res)) reg[4]="si";
             }
             composa('x');
@@ -347,7 +347,7 @@ public class PanellVols extends Pantalla {
         panell.cursor(7, 22);
         if (validOpts.size() > 0) {
             String model = panell.getString("Model d'avió : ", validOpts);
-            Integer places = Avio.flota.get(model);
+            Integer placesp = Avio.flota.get(model);
             // panell.mostra();
             panell.cursor(7, 23);
             String pais = panell.getString("Pais d'oritge : ", paisos);
@@ -355,7 +355,7 @@ public class PanellVols extends Pantalla {
             this.peu = "Info: Pais d'oritge " + pais;
             capsa[2] = "AEROPORTS " + pais.toUpperCase();
             panell.cursor(7, 22);
-            panell.situa("PLACES PER A PASSATGERS : " + places, 'c');
+            panell.situa("PLACES PER A PASSATGERS : " + placesp, 'c');
             composa('1');
             panell.cursor(7, 23);
             panell.situa(" ".repeat(31),'w');
@@ -382,8 +382,9 @@ public class PanellVols extends Pantalla {
                     + model;
             capsa[2] = "OR: TOTS DT: TOTS";
             capsa[1] = "SEIENTS AVIÓ";
-            mapavio=Vuelo.generaPlaces(places);
-            Vuelo vol = new Vuelo(places, codiOrige, codiDest, data);
+            if(PanellVols.mapavio!=null) PanellVols.mapavio.clear();
+            PanellVols.mapavio=Vuelo.generaPlaces(placesp);
+            Vuelo vol = new Vuelo(placesp, codiOrige, codiDest, data);
 
         } else
             peu = "Advertència: cal donar d'alta modèls d'avió";
@@ -413,7 +414,8 @@ public class PanellVols extends Pantalla {
         Avio model = new Avio(nomAvio, places); //objecte sense us
         this.peu = "Info: Afegit model d'avió " + nomAvio + " amb " + places + " places";
         capsa[1] = "SEIENTS AVIÓ";
-        mapavio = Vuelo.generaPlaces(places);
+        if(PanellVols.mapavio!=null) PanellVols.mapavio.clear();
+        PanellVols.mapavio = Vuelo.generaPlaces(places);
         composa('x');
     }
 
