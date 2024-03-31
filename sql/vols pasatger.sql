@@ -1,0 +1,1 @@
+SELECT Vuelos.* FROM Vuelos INNER JOIN Plazas ON Vuelos.id_vuelo = Plazas.id_vuelo WHERE Plazas.id_pasajero = '33409897M';

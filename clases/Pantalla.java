@@ -109,7 +109,7 @@ public class Pantalla {
         this.situa(x, y, texte, this.ultcol);
     }
 
-    public void cursor(int x, int y) {
+    private void cursor(int x, int y) {
         this.cx = x;
         this.cy = y;
     }
@@ -221,6 +221,11 @@ public class Pantalla {
         this.cy = (y > this.ver) ? this.ver : y;
     }
 
+    public void lineUp(){
+        this.cy=(this.cy==0)?0:this.cy-1;
+    }
+
+
     public String getString(List<String> valids) {
         mostraFins(this.cx, this.cy);
         String res = sc.nextLine();
@@ -259,6 +264,15 @@ public class Pantalla {
         String res = getString();
         this.cx = tempcx;
         return res;
+    }
+    public Integer getInteger(int min, int max, String pregunta){
+        int tempcx = this.cx;
+        situa(pregunta);
+        cursor(this.cx + pregunta.length(), this.cy - 1);
+        Integer val = getInteger(min,max);
+        this.cx = tempcx;
+        return val;
+
     }
 
     public Integer getInteger() {

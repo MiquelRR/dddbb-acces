@@ -10,7 +10,7 @@ public class prova {
         Integer edad =0;
         String nom = "anònim";
         p.marc();
-        p.cursor(1, 10);
+        p.setCursor(1, 10);
         p.situa("------------");
         p.getLocalDate();
         p.situa("Donde estudias:");
@@ -21,14 +21,14 @@ public class prova {
         edad=p.getInteger();
         String especialidad ;
         List<String> lista = Arrays.asList("DAM","DAW","HPGL","NADA","ASMR","COSAS");
-        p.cursor(36,2);
+        p.setCursor(36,2);
         p.situa("ELIGE:");
         //p.situa(lista);
         especialidad=p.getString("--->:",lista);
-        p.cursor(9,6);
+        p.setCursor(9,6);
         edad =p.getInteger("Cuantos añitos tienes :");
         p.situa("--------------------");
-        p.cursor(10,20);
+        p.setCursor(10,20);
         p.situa(nom+", de "+edad+" años de edad\ncursando "+curso,'v');
         p.situa(especialidad);
         p.mostra();

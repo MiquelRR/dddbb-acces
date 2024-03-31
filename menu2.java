@@ -22,10 +22,15 @@ public class menu2 {
                 case '2':
                     p.altaPas();
                     break;
-                case'3':
+                case '3':
                     p.reservaVol();
+                    break;
+                case '4':
+                    p.editaSeient();
+                    break;
                 case '6':
                     p.fi();
+                    break;
             }
         } while (opcio != '6');
     }
