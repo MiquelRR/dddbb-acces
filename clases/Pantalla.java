@@ -288,16 +288,16 @@ public class Pantalla {
             if(val>=min && val <=max){
                 situa(Integer.toString(val));
                 return val;
-            } else return getInteger();
+            } else return getInteger(min, max);
         } catch (NumberFormatException e) {
-            return getInteger();
+            return getInteger(min,max);
         }
     }
     public Integer getInteger(String pregunta) {
         int tempcx = this.cx;
         situa(pregunta);
         cursor(this.cx + pregunta.length(), this.cy - 1);
-        Integer val = getInteger();
+        Integer val = getInteger(Integer.MIN_VALUE,Integer.MAX_VALUE);
         this.cx = tempcx;
         return val;
     }

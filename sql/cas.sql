@@ -1,0 +1,1 @@
+UPDATE Plazas SET id_pasajero = null, ocupado='no' WHERE id_plaza = 2; UPDATE Plazas SET id_pasajero = '123', ocupado='si' WHERE Id_vuelo = 1 AND  id_asiento = 'E01';
