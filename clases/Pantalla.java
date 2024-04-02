@@ -235,6 +235,36 @@ public class Pantalla {
         } else
             return getString(valids);
     }
+    public String getStringExcept(String invalidOption){
+        mostraFins(this.cx, this.cy);
+        String res = sc.nextLine().strip().toUpperCase();
+        if (res.equals(invalidOption.strip().toUpperCase())) {
+            situa(res);
+            return res;
+        } else
+            return getStringExcept(invalidOption);
+    }
+
+    public String getStringExcept(String pregunta, String  invalidOption){
+        int tempcx = this.cx;
+        situa(pregunta);
+        cursor(this.cx + pregunta.length(), this.cy - 1);
+        String res = getStringExcept(invalidOption);
+        this.cx = tempcx;
+        return res;
+    }
+
+    public String getStringExcept(List<String> invalids){
+        mostraFins(this.cx, this.cy);
+        String res = sc.nextLine();
+        if (!invalids.contains(res)) {
+            situa(res);
+            return res;
+        } else
+            return getStringExcept(invalids);
+
+    }
+
     public String getString(Integer maxLength){
         mostraFins(this.cx, this.cy);
         String res = sc.nextLine();
@@ -253,6 +283,14 @@ public class Pantalla {
         situa(pregunta);
         cursor(this.cx + pregunta.length(), this.cy - 1);
         String res = getString(valids);
+        this.cx = tempcx;
+        return res;
+    }
+    public String getStringExcept(String pregunta,List<String>  invalids){
+        int tempcx = this.cx;
+        situa(pregunta);
+        cursor(this.cx + pregunta.length(), this.cy - 1);
+        String res = getStringExcept(invalids);
         this.cx = tempcx;
         return res;
     }

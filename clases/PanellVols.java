@@ -3,6 +3,7 @@ package clases;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,7 +12,7 @@ import java.util.stream.Collectors;
 
 //--------------------------------patrón Singleton 
 public class PanellVols extends Pantalla {
-    private static Scanner sc =new Scanner(System.in);
+    private static Scanner sc = new Scanner(System.in);
     private static PanellVols panell;// -------patrón Singleton
     private static int h = 120, v = 38, vf = (v - 4 - 2); // vf son les linees de la zona de dades
     private static int mig = 5 + vf / 2; // posicio de la linea central de la zona de dades
@@ -78,7 +79,7 @@ public class PanellVols extends Pantalla {
     private static List<String[]> aeroportsPais;
     private static List<String[]> volsMostrats;
     private static List<String[]> mapavio;
-    private static List<String[]> reserves; 
+    private static List<String[]> reserves;
     private static int maxpl = 6 * (vf);
 
     private static int xa = 0, ya = 0;
@@ -162,25 +163,22 @@ public class PanellVols extends Pantalla {
                 if (plaza[4].equals("no")) {
                     color = 'w';
                     validOpts.add(plaza[1]);
-                } else{
+                } else {
                     if (selPassDoc.equals(plaza[2])) {
                         color = 'c';
                     } else {
                         color = 'n';
-                        System.out.println(">".repeat(130)+plaza[2]+"-"+selPassDoc);
                     }
 
                 }
-                    
-                
-               
+
                 situa(x + seientsLloc.get(plaza[1].charAt(0)), y, plaza[1], color);
             }
             panell.setCursor(x, ++y);
             for (String linea : asciiCua) {
                 panell.situa(linea, 'w');
             }
-            //selPassDoc="*";
+            // selPassDoc="*";
         }
         String[] cp = capsa[2].split(" "); // separa capçalera 2
         if (cp[0].equals("OR:")) {
@@ -191,27 +189,50 @@ public class PanellVols extends Pantalla {
             volsMostrats = Accesdb.lligTaula("Vuelos");
 
             if (!cp[1].equals("TOT")) {// filtra per orige
-                volsMostrats = volsMostrats.stream().filter(arr -> cp[1].equals(arr[1]))
-                        .collect(Collectors.toList());
-                idx = 1;
-            }
-            if (!cp[3].equals("TOT")) {// afig filtre per destinacio
-                volsMostrats = volsMostrats.stream().filter(arr -> cp[1].equals(arr[1]))
+                volsMostrats = volsMostrats.stream().filter(regVol -> cp[1].equals(regVol[1]))
                         .collect(Collectors.toList());
                 idx = 2;
+            }
+            if (!cp[3].equals("TOT")) {// afig filtre per destinacio
+                volsMostrats = volsMostrats.stream().filter(regVol -> cp[3].equals(regVol[2]))
+                        .collect(Collectors.toList());
+                // idx = 2;
             }
 
             if (validCodis != null)
                 validCodis.clear();
 
             panell.situa("  ORITGE      DESTINACIÓ     DATA", 'c');
+            List<Integer> volsPassatger = Accesdb.lligQuery2Integers(String.format(Accesdb.volsPas, selPassDoc));
+            List<Integer> volsCompletsIdx = new ArrayList<>();
             for (String[] r : volsMostrats) {
                 String or_pais = Accesdb.lligReg(String.format(Accesdb.paisdecCodi, r[1]))[0];
                 or_pais = String.format("%-8s", or_pais).substring(0, 8);
                 String de_pais = Accesdb.lligReg(String.format(Accesdb.paisdecCodi, r[2]))[0];
                 de_pais = String.format("%-8s", de_pais).substring(0, 8);
-                panell.situa(r[1] + "-" + or_pais + " " + r[2] + "-" + de_pais + " " + r[3], 'w');
-                validCodis.add(r[idx]);
+                boolean hiHaPlaces = Integer.parseInt(
+                        Accesdb.lligQuery(String.format(Accesdb.lliures, Integer.parseInt(r[0]))).get(0)[0]) > 0;
+                char color;
+                if (volsPassatger.contains(Integer.parseInt(r[0]))) {
+                    color = 'g';
+                    volsCompletsIdx.add(volsMostrats.indexOf(r));
+                } else {
+                    if (hiHaPlaces) {
+                        color = 'w';
+                        validCodis.add(r[idx]);
+                    } else {
+                        color = 'r';
+                        volsCompletsIdx.add(volsMostrats.indexOf(r));
+                    }
+                }
+                panell.situa(r[1] + "-" + or_pais + " " + r[2] + "-" + de_pais + " " + r[3], color);
+
+            }
+            // treim de la llista de vols els no sel·leccionables, se ordena la llista
+            // alreves per eliminar sense pegues
+            Collections.sort(volsCompletsIdx, Collections.reverseOrder());
+            for (int i : volsCompletsIdx) {
+                volsMostrats.remove(i);
             }
 
         }
@@ -247,17 +268,18 @@ public class PanellVols extends Pantalla {
             if (validOpts.size() > 0)
                 validOpts.clear();
             for (String[] rese : reserves) {
-                System.out.println("-".repeat(130)+rese[0]);
-                boolean hiHaPlaces = Integer.parseInt(Accesdb.lligQuery(String.format(Accesdb.lliures, Integer.parseInt(rese[0]))).get(0)[0]) > 0;
-                char color = (!hiHaPlaces && c=='4') ? 'n' : 'c';
+                boolean hiHaPlaces = Integer.parseInt(
+                        Accesdb.lligQuery(String.format(Accesdb.lliures, Integer.parseInt(rese[0]))).get(0)[0]) > 0;
+                char color = (!hiHaPlaces && c == '4') ? 'n' : 'c';
                 panell.situa(x + 33, ++y, rese[6], 'g');
                 panell.situa(x + 4, y, rese[1] + "-" + rese[2] + " " + rese[3] + "-" + rese[4], 'w');
                 panell.situa(x, y++, "#" + idx, color);
-                panell.situa(x + 4, y++, rese[5], 'w');
+                panell.situa(x + 4, y, rese[5], 'w');
                 if (!hiHaPlaces) {
-                    panell.situa(x + 4, y++, "COMPLET", 'r');
+                    panell.situa(x + 20, y, "COMPLET", 'r');
                 }
-                if (color != 'n') 
+                y++;
+                if (color != 'n')
                     validOpts.add(idx.toString());
                 idx++;
             }
@@ -346,31 +368,53 @@ public class PanellVols extends Pantalla {
 
     }
 
-    public void editaSeient() {
-        String accioText="Modifica seient";
-        int y = 25;
-        this.peu = "";
-        String volId = null, document = "", or = "", dt = "";
+    public void alliberaSeient() {
+        int rs = triaReservaPassatger('5', "Anul·la");
+        if (rs > -1) {
+            String id_plaza = reserves.get(rs)[7];
+            String alliberada = reserves.get(rs)[6];
+            Accesdb.modifica(String.format(Accesdb.llibera, id_plaza));
+            peu = "Info: plaza alliberada " + alliberada;
+            composa('x');
+            mostra();
+        } else
+            peu = "Advertència: no hi han passatgers amb reserves";
+
+    }
+
+    private int triaReservaPassatger(char menuopt, String accioText) {
+        peu = "Info: Únicament són seleccionables els passatgers que tenen reserves";
+        String document = "";
         capsa[1] = "PASSATGERS ACTIUS";
         capsa[2] = "OR: TOT DT: TOT";
-        composa('4');
-        Integer rs = 0;
+        composa(menuopt);
+        int rs = -1;
         if (validOpts.size() > 0) {
             panell.setCursor(7, 22);
             document = panell.getString("Passatger DOCUMENT :", validOpts).strip();
             validOpts.clear();
-            capsa[1] = "INFO: "+document;
-            composa('4');
-            if (validOpts.size() > 1) {
-                peu = "Info: ingresa una reserva entre "+validOpts.get(0)+" i " + validOpts.get(validOpts.size()-1) + " excepte vols complets";
-                composa('4');
+            capsa[1] = "INFO: " + document;
+            composa(menuopt);
+            if (validOpts.size() > 0) {
+                peu = "Info: ingresa una reserva entre " + validOpts.get(0) + " i "
+                        + validOpts.get(validOpts.size() - 1) + ((menuopt == '4') ? " excepte vols complets" : "");
+                composa(menuopt);
                 mostra();
                 panell.setCursor(7, 23);
-                rs = Integer.parseInt(panell.getString(accioText+" reserva #",validOpts))-1;
-            } 
-    
-            String id_vol=reserves.get(rs)[0];
-            String id_plaza=reserves.get(rs)[7];
+                rs = Integer.parseInt(panell.getString(accioText + " reserva #", validOpts)) - 1;
+            }
+        }
+        return rs;
+    }
+
+    public void editaSeient() {
+        selPassDoc = "";
+        int rs = triaReservaPassatger('4', "Modifica seient");
+        if (rs > -1) {
+            String id_vol = reserves.get(rs)[0];
+            String id_plaza = reserves.get(rs)[7];
+            String document = reserves.get(rs)[8];
+            String alliberada = reserves.get(rs)[6];
             mapavio = Accesdb.lligQuery(String.format(Accesdb.placesVol, id_vol));
 
             capsa[1] = "SEIENTS AVIÓ";
@@ -378,20 +422,19 @@ public class PanellVols extends Pantalla {
             composa('4');
             mostra();
             panell.setCursor(7, 24);
-            String pl = panell.getString( "Nou seient :",validOpts);
-         
+            String pl = panell.getString("Nou seient :", validOpts);
 
-            Accesdb.modifica(String.format(Accesdb.ocupa,document,id_vol,pl));
-            Accesdb.modifica(String.format(Accesdb.llibera,id_plaza));
-            peu="Info: plaza alliberada "+reserves.get(rs)[6]+", nou seient "+pl;
-            //INNEFICIENT: deuria d'actualitzar mapavio
-            mapavio = Accesdb.lligQuery(String.format(Accesdb.placesVol, id_vol));
-            composa('x');
-            mostra();
-            
+            Accesdb.modifica(String.format(Accesdb.ocupa, document, id_vol, pl));
+            Accesdb.modifica(String.format(Accesdb.llibera, id_plaza));
+            peu = "Info: plaza alliberada " + alliberada + ", nou seient " + pl;
+            // INNEFICIENT: deuria d'actualitzar mapavio
+            // mapavio = Accesdb.lligQuery(String.format(Accesdb.placesVol, id_vol));
+            // composa('x');
+            // mostra();
+            capsa[1] = "INFO: " + document;
         } else
-            peu = "Advertència: no hi han passatgers amb reserves";
-            
+            peu = "Advertència: no es possible fer canvis de lloc";
+
     }
 
     public void reservaVol() {
@@ -405,7 +448,11 @@ public class PanellVols extends Pantalla {
             if (validCodis.size() > 0) {
                 panell.setCursor(7, 22);
                 document = panell.getString("Passatger DOCUMENT :", validOpts);
-                selPassDoc=document;
+                selPassDoc = document;
+                peu = "Info: en roig son vols complets, en groc son vols on ja está enregistrat el pasatger "
+                        + selPassDoc;
+                composa('3');
+                mostra();
                 panell.setCursor(7, 23);
                 or = panell.getString("Aeroport Orige (CODI) : ", validCodis);
                 capsa[2] = "OR: " + or + " DT: TOT";
@@ -427,7 +474,6 @@ public class PanellVols extends Pantalla {
                     y++;
                     if (res.toUpperCase().charAt(0) == 'S') {
                         volId = vol[0];
-                        // System.out.println(">".repeat(130)+vol[0]);
                         break; // Gracias Patxi: ya tenemos permiso para usarlo!
                     }
                 }
@@ -451,7 +497,7 @@ public class PanellVols extends Pantalla {
             peu = "Info: Reserva realizada per " + document + " al seient " + res;
             Accesdb.modifica(String.format(Accesdb.ocupa, document, volId, res));
             for (String[] reg : mapavio) { // marcat en local el preview
-                if (reg[1].equals(res)){
+                if (reg[1].equals(res)) {
                     reg[4] = "si";
                     reg[2] = document;
                 }
@@ -460,6 +506,7 @@ public class PanellVols extends Pantalla {
             panell.mostra();
             capsa[1] = "ÚLTIMA RESERVA :" + res;
         }
+        capsa[1] = "INFO: " + document;
 
     }
 
@@ -488,11 +535,29 @@ public class PanellVols extends Pantalla {
             this.peu = "Info: Aeroport orige triat " + codiOrige;
             capsa[2] = "PAÏSOS";
             composa('1');
-            panell.setCursor(7, 24);
-            pais = panell.getString("Pais destinació : ", paisos);
-            triaPais(pais);
-            this.peu = "Info: Pais destinació " + pais;
-            capsa[2] = "AEROPORTS " + pais.toUpperCase();
+            if (validCodis.size() > 0)
+                validCodis.clear();
+            do {
+                capsa[2] = "PAÏSOS";
+                composa('1');
+                panell.setCursor(7, 24);
+                panell.situa(" ".repeat(32));
+                panell.setCursor(7, 24);
+                pais = panell.getString("Pais destinació : ", paisos);
+                triaPais(pais);
+                panell.composa('1');
+                peu = "Info: Tria codi aeroport a " + pais;
+                capsa[2] = "AEROPORTS " + pais.toUpperCase();
+                panell.composa('1');
+                if (validCodis.contains(codiOrige)) {
+                    validCodis.remove(codiOrige);
+                    if(validCodis.size()==0){
+                        peu="Advertència: vol circular imposible, tria un altre pais";
+                        panell.composa('1');
+                    }
+                }
+                panell.composa('1');
+            } while (validCodis.size() == 0); // Hi han Paisos en un sol aeroport!
             composa('1');
             panell.setCursor(7, 24);
             panell.situa(" ".repeat(31), 'w');
@@ -515,12 +580,12 @@ public class PanellVols extends Pantalla {
             peu = "Advertència: cal donar d'alta modèls d'avió";
 
         composa('x');
+        selPassDoc = "";
     }
 
     private void triaPais(String pais) {
         aeroportsPais = Accesdb.lligQuery(String.format(Accesdb.aeroportsDe, pais));
         validCodis.clear();
-        int i = 0;
         for (String[] registre : aeroportsPais) {
             validCodis.add(registre[0]);
         }
@@ -531,18 +596,19 @@ public class PanellVols extends Pantalla {
         capsa[1] = "MODELS AVIONS";
         this.peu = "Info: Enter per a tabular";
         composa('0');
-        String nomAvio = panell.getString();
+        String nomAvio = panell.getStringExcept(validOpts);
         capsa[1] = "PLACES PER PASSATGERS";
-        this.peu = "Info: Mínim 4 Màxim " + maxpl + " places";
+        this.peu = "Info: No es poden repetir amb el mateix nom, mínim 10 Màxim " + maxpl + " places";
         composa('0');
-        int places = panell.getInteger(4, maxpl);
-        Avio model = new Avio(nomAvio, places); // objecte sense us
-        this.peu = "Info: Afegit model d'avió " + nomAvio + " amb " + places + " places";
+        int places = panell.getInteger(10, maxpl);
+        Avio model = new Avio(nomAvio, places); // objecte sense us mes que donar l'alta a la bbdd
+        this.peu = "Info: Afegit model d'avió \"" + nomAvio + "\" amb " + places + " places";
         capsa[1] = "SEIENTS AVIÓ";
         if (mapavio != null)
             mapavio.clear();
         mapavio = Vuelo.generaPlaces(places);
         composa('x');
+        selPassDoc = "";
     }
 
     public void altaPas() {
@@ -561,6 +627,8 @@ public class PanellVols extends Pantalla {
         Pasajero pas = new Pasajero(nomPass, doc);
         capsa[1] = "PASSATGERS";
         this.peu = "Info: Afegit passager " + nomPass + " amb document " + doc;
+        selPassDoc = doc;
+        capsa[1] = "INFO: " + doc;
 
     }
 

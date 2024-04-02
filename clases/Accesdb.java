@@ -21,15 +21,14 @@ public class Accesdb {
     public final static String placesVol="SELECT * FROM Plazas WHERE id_vuelo = %s;";
     public final static String ocupa="UPDATE Plazas SET id_pasajero = '%s', ocupado = 'si' WHERE id_vuelo = %s AND id_asiento = '%s';";
     public final static String contaVolsPas="SELECT COUNT(*) FROM Plazas WHERE id_pasajero = '%s';";
-    public final static String volsPas="SELECT Vuelos.* FROM Vuelos INNER JOIN Plazas ON Vuelos.id_vuelo = Plazas.id_vuelo WHERE Plazas.id_pasajero = '%s';";
+    public final static String volsPas="SELECT Vuelos.id_vuelo FROM Vuelos INNER JOIN Plazas ON Vuelos.id_vuelo = Plazas.id_vuelo WHERE Plazas.id_pasajero = '%s';";
     public final static String volsNoPas="SELECT Vuelos.* FROM Vuelos LEFT JOIN Plazas ON Vuelos.id_vuelo = Plazas.id_vuelo AND Plazas.id_pasajero = '%s' WHERE Plazas.Id_plaza IS NULL";
     public final static String passatgersActius="SELECT DISTINCT Pasajeros.* FROM Pasajeros INNER JOIN Plazas ON Pasajeros.numero_pasaporte = Plazas.id_pasajero;";
     public final static String pasatger="SELECT numero_pasaporte,nombre_pasajero FROM Pasajeros WHERE numero_pasaporte='%s';";
-    public final static String reservesPas="SELECT Vuelos.id_vuelo, Vuelos.origen, aeropuerto_origen.Pais AS pais_origen, Vuelos.destino, aeropuerto_destino.Pais AS pais_destino, Vuelos.fecha, Plazas.id_asiento, Plazas.id_plaza FROM Vuelos INNER JOIN Plazas ON Vuelos.id_vuelo = Plazas.id_vuelo INNER JOIN Aeropuertos AS aeropuerto_destino ON Vuelos.destino = aeropuerto_destino.Codigo INNER JOIN Aeropuertos AS aeropuerto_origen ON Vuelos.origen = aeropuerto_origen.Codigo WHERE Plazas.id_pasajero = '%s' ";
+    public final static String reservesPas="SELECT Vuelos.id_vuelo, Vuelos.origen, aeropuerto_origen.Pais AS pais_origen, Vuelos.destino, aeropuerto_destino.Pais AS pais_destino, Vuelos.fecha, Plazas.id_asiento, Plazas.id_plaza, Plazas.id_pasajero FROM Vuelos INNER JOIN Plazas ON Vuelos.id_vuelo = Plazas.id_vuelo INNER JOIN Aeropuertos AS aeropuerto_destino ON Vuelos.destino = aeropuerto_destino.Codigo INNER JOIN Aeropuertos AS aeropuerto_origen ON Vuelos.origen = aeropuerto_origen.Codigo WHERE Plazas.id_pasajero = '%s' ";
     public final static String volsambPlazaLLiure="SELECT DISTINCT id_vuelo FROM Plazas WHERE ocupado = 'no'";
     public final static String lliures="SELECT COUNT(*) FROM Plazas WHERE id_vuelo = %d AND ocupado = 'no'";
     public final static String llibera="UPDATE Plazas SET id_pasajero = null, ocupado='no' WHERE id_plaza = %s;";
-
     public static Scanner sc = new Scanner(System.in);
 
     public static void modifica(String query){
@@ -127,6 +126,20 @@ public class Accesdb {
             System.out.println("Error en la bd -lligTaula- : " + e.getErrorCode() + "-" + e.getMessage());
             sc.nextLine();
         }
+        return eixida;
+    }
+    public static List<Integer> lligQuery2Integers(String query){
+        List<Integer> eixida= new ArrayList<>();
+        List<String[]> l=lligQuery(query);
+        try {
+            for (String[] str : l) {
+                eixida.add(Integer.parseInt(str[0]));            
+            }
+        } catch (Exception e) {
+            System.out.println(query);
+            System.out.println("Error obtenint una lllista de Integer a partir de la query");
+        }
+        
         return eixida;
     }
 

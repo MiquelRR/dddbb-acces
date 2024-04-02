@@ -28,6 +28,9 @@ public class menu2 {
                 case '4':
                     p.editaSeient();
                     break;
+                case '5':
+                    p.alliberaSeient();
+                    break;
                 case '6':
                     p.fi();
                     break;
