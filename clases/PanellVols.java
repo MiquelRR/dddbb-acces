@@ -383,6 +383,7 @@ public class PanellVols extends Pantalla {
     }
 
     private int triaReservaPassatger(char menuopt, String accioText) {
+        selPassDoc = "";
         peu = "Info: Únicament són seleccionables els passatgers que tenen reserves";
         String document = "";
         capsa[1] = "PASSATGERS ACTIUS";
@@ -453,32 +454,36 @@ public class PanellVols extends Pantalla {
                         + selPassDoc;
                 composa('3');
                 mostra();
-                panell.setCursor(7, 23);
-                or = panell.getString("Aeroport Orige (CODI) : ", validCodis);
-                capsa[2] = "OR: " + or + " DT: TOT";
-                peu = "Info: aeroport orige " + or;
-                composa('3');
-                if (volsMostrats.size() > 1) {
-                    panell.setCursor(7, 24);
-                    dt = panell.getString("Aeroport Dest. (CODI) : ", validCodis);
-                    capsa[2] = "OR: " + or + " DT: " + dt;
-                    peu = "Info: aeroport orige " + or + " i destinacio " + dt;
-                } else {
-                    capsa[1] = "PASSATGERS";
-                    panell.situa("Aeroport Dest. (CODI) : " + volsMostrats.get(0)[3], 'w');
-                }
-                composa('3');
-                panell.setCursor(7, y);
-                for (String[] vol : volsMostrats) {
-                    String res = panell.getString(vol[3] + " (s/n) : ", sino);
-                    y++;
-                    if (res.toUpperCase().charAt(0) == 'S') {
-                        volId = vol[0];
-                        break; // Gracias Patxi: ya tenemos permiso para usarlo!
+                if (validCodis.size() > 0) {
+                    panell.setCursor(7, 23);
+                    or = panell.getString("Aeroport Orige (CODI) : ", validCodis);
+                    capsa[2] = "OR: " + or + " DT: TOT";
+                    peu = "Info: aeroport orige " + or;
+                    composa('3');
+
+                    if (volsMostrats.size() > 1) {
+                        panell.setCursor(7, 24);
+                        dt = panell.getString("Aeroport Dest. (CODI) : ", validCodis);
+                        capsa[2] = "OR: " + or + " DT: " + dt;
+                        peu = "Info: aeroport orige " + or + " i destinacio " + dt;
+                    } else {
+                        capsa[1] = "PASSATGERS";
+                        panell.situa("Aeroport Dest. (CODI) : " + volsMostrats.get(0)[3], 'w');
                     }
-                }
-                composa('3');
-                mostra();
+                    composa('3');
+                    panell.setCursor(7, y);
+                    for (String[] vol : volsMostrats) {
+                        String res = panell.getString(vol[3] + " (s/n) : ", sino);
+                        y++;
+                        if (res.toUpperCase().charAt(0) == 'S') {
+                            volId = vol[0];
+                            break; // Gracias Patxi: ya tenemos permiso para usarlo!
+                        }
+                    }
+                    composa('3');
+                    mostra();
+                } else
+                    peu = "Advertència: el pasatger ja esta volant a tots els vols.";
             } else
                 peu = "Advertència: cal fer altes de vols.";
         } else
@@ -551,8 +556,8 @@ public class PanellVols extends Pantalla {
                 panell.composa('1');
                 if (validCodis.contains(codiOrige)) {
                     validCodis.remove(codiOrige);
-                    if(validCodis.size()==0){
-                        peu="Advertència: vol circular imposible, tria un altre pais";
+                    if (validCodis.size() == 0) {
+                        peu = "Advertència: vol circular impossible, tria un altre pais";
                         panell.composa('1');
                     }
                 }
