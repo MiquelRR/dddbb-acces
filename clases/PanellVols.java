@@ -54,7 +54,7 @@ public class PanellVols extends Pantalla {
     private static String[] capsa = new String[] { "MENU", "PASSATGERS", "OR: TOT DT: TOT" };
     private static int n = capsa.length;
     private static String selPassNom = "";
-    private static String selPassDoc = "@";
+    private static String selPassDoc = "*";
 
     static {
         opcions.put(opval.get(0).charAt(0), "Alta Model d'Avió");
@@ -383,7 +383,7 @@ public class PanellVols extends Pantalla {
     }
 
     private int triaReservaPassatger(char menuopt, String accioText) {
-        selPassDoc = "";
+        selPassDoc = "*";
         peu = "Info: Únicament són seleccionables els passatgers que tenen reserves";
         String document = "";
         capsa[1] = "PASSATGERS ACTIUS";
@@ -409,7 +409,7 @@ public class PanellVols extends Pantalla {
     }
 
     public void editaSeient() {
-        selPassDoc = "";
+        selPassDoc = "*";
         int rs = triaReservaPassatger('4', "Modifica seient");
         if (rs > -1) {
             String id_vol = reserves.get(rs)[0];
@@ -499,7 +499,7 @@ public class PanellVols extends Pantalla {
             composa('3');
             panell.setCursor(7, y);
             String res = panell.getString(" Plaça desitjada : ", validOpts);
-            peu = "Info: Reserva realizada per " + document + " al seient " + res;
+            peu = "Info: Reserva realitzada per " + document + " al seient " + res;
             Accesdb.modifica(String.format(Accesdb.ocupa, document, volId, res));
             for (String[] reg : mapavio) { // marcat en local el preview
                 if (reg[1].equals(res)) {
@@ -585,7 +585,7 @@ public class PanellVols extends Pantalla {
             peu = "Advertència: cal donar d'alta modèls d'avió";
 
         composa('x');
-        selPassDoc = "";
+        selPassDoc = "*";
     }
 
     private void triaPais(String pais) {
@@ -613,7 +613,7 @@ public class PanellVols extends Pantalla {
             mapavio.clear();
         mapavio = Vuelo.generaPlaces(places);
         composa('x');
-        selPassDoc = "";
+        selPassDoc = "*";
     }
 
     public void altaPas() {
