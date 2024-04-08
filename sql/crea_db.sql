@@ -2,13 +2,6 @@ CREATE DATABASE IF NOT EXISTS Reservas;
 
 USE Reservas;
 
-CREATE TABLE IF NOT EXISTS Vuelos (
-    id_vuelo INT AUTO_INCREMENT PRIMARY KEY,
-    origen VARCHAR(100),
-    destino VARCHAR(100),
-    fecha DATE
-);
-
 CREATE TABLE IF NOT EXISTS Pasajeros (
     numero_pasaporte VARCHAR(20) PRIMARY KEY,
     nombre_pasajero VARCHAR(100)
@@ -20,7 +13,20 @@ CREATE TABLE IF NOT EXISTS Aeropuertos (
     Pais VARCHAR(25),
     Ciudad VARCHAR(25)
 );
-
+CREATE TABLE IF NOT EXISTS Tipo_de_Avion (
+    Id_tipo INT AUTO_INCREMENT PRIMARY KEY,
+    modelo VARCHAR(100),
+    asientos INT
+);
+CREATE TABLE IF NOT EXISTS Vuelos (
+    id_vuelo INT AUTO_INCREMENT PRIMARY KEY,
+    origen VARCHAR(5),
+    destino VARCHAR(5),
+    fecha DATE,
+    FOREIGN KEY (origen) REFERENCES Aeropuertos(Codigo),
+    FOREIGN KEY (destino) REFERENCES Aeropuertos(Codigo),
+    CONSTRAINT chk_origen_destino CHECK (origen <> destino)
+);
 CREATE TABLE IF NOT EXISTS Plazas (
     Id_plaza INT AUTO_INCREMENT PRIMARY KEY,
     id_asiento VARCHAR(5),
@@ -29,12 +35,6 @@ CREATE TABLE IF NOT EXISTS Plazas (
     ocupado ENUM('si', 'no') DEFAULT 'no',
     FOREIGN KEY (id_vuelo) REFERENCES Vuelos(id_vuelo),
     FOREIGN KEY (id_pasajero) REFERENCES Pasajeros(numero_pasaporte)
-);
-
-CREATE TABLE IF NOT EXISTS Tipo_de_Avion (
-    Id_tipo INT AUTO_INCREMENT PRIMARY KEY,
-    modelo VARCHAR(100),
-    asientos INT
 );
 
 insert into Aeropuertos (Codigo, Nombre, Pais, Ciudad) values ("TXL", "Tegel", "Alemania", "Berlín");
